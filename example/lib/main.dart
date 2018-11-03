@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
 class HomePage extends StatelessWidget {
   _renderBg() {
     return Container(
-      decoration: BoxDecoration(color: const Color(0xff339966)),
+      decoration: BoxDecoration(color: const Color(0xFFFFFFFF)),
     );
   }
 
@@ -43,7 +43,7 @@ class HomePage extends StatelessWidget {
         direction: FlipDirection.HORIZONTAL,
         front: Container(
           decoration: BoxDecoration(
-            color: Color(0x0F000000),
+            color: Color(0xFF006666),
             borderRadius: BorderRadius.all(Radius.circular(8.0)),
           ),
           child: Column(
@@ -57,7 +57,7 @@ class HomePage extends StatelessWidget {
         ),
         back: Container(
           decoration: BoxDecoration(
-            color: Color(0x0F000000),
+            color: Color(0xFF006666),
             borderRadius: BorderRadius.all(Radius.circular(8.0)),
           ),
           child: Column(

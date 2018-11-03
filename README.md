@@ -3,8 +3,8 @@
 flutter flip card
 
 <p>
-<img src="https://github.com/fedeoo/flip_card/blob/master/screenshots/flip-h.gif?raw=true" width="320" />
-<img src="https://github.com/fedeoo/flip_card/blob/master/screenshots/flip-v.gif?raw=true" width="320" />
+<img src="https://github.com/fedeoo/flip_card/blob/master/screenshots/flip-h.gif?raw=true&v1" width="320" />
+<img src="https://github.com/fedeoo/flip_card/blob/master/screenshots/flip-v.gif?raw=true&v1" width="320" />
 </p>
 
 ## How to use
