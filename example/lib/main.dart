@@ -18,16 +18,7 @@ class MyApp extends StatelessWidget {
 class HomePage extends StatelessWidget {
   _renderBg() {
     return Container(
-      decoration: BoxDecoration(
-        gradient: new LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFF2B5876),
-            Color(0xFF4E4376),
-          ],
-        ),
-      ),
+      decoration: BoxDecoration(color: const Color(0xff339966)),
     );
   }
 
@@ -43,13 +34,13 @@ class HomePage extends StatelessWidget {
     );
   }
 
-
   _renderContent(context) {
     return Card(
       elevation: 0.0,
       margin: EdgeInsets.only(left: 32.0, right: 32.0, top: 20.0, bottom: 0.0),
       color: Color(0x00000000),
       child: FlipCard(
+        direction: FlipDirection.HORIZONTAL,
         front: Container(
           decoration: BoxDecoration(
             color: Color(0x0F000000),
@@ -59,7 +50,8 @@ class HomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text('Front', style: Theme.of(context).textTheme.headline),
-              Text('Click here to flip back', style: Theme.of(context).textTheme.body1),
+              Text('Click here to flip back',
+                  style: Theme.of(context).textTheme.body1),
             ],
           ),
         ),
@@ -72,13 +64,15 @@ class HomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text('Back', style: Theme.of(context).textTheme.headline),
-              Text('Click here to flip front', style: Theme.of(context).textTheme.body1),
+              Text('Click here to flip front',
+                  style: Theme.of(context).textTheme.body1),
             ],
           ),
         ),
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,6 +100,4 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
-
 }
-

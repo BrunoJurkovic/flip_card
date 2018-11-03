@@ -3,21 +3,32 @@ library flip_card;
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-class FlipInYCard extends StatelessWidget {
-  FlipInYCard({this.child, this.animation});
+enum FlipDirection {
+  VERTICAL,
+  HORIZONTAL,
+}
+
+class AnimationCard extends StatelessWidget {
+  AnimationCard({this.child, this.animation, this.direction});
 
   final Widget child;
   final Animation<double> animation;
+  final FlipDirection direction;
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: animation,
       builder: (BuildContext context, Widget child) {
+        var transform = Matrix4.identity();
+        transform.setEntry(3, 2, 0.001);
+        if (direction == FlipDirection.VERTICAL) {
+          transform.rotateX(animation.value);
+        } else {
+          transform.rotateY(animation.value);
+        }
         return Transform(
-          transform: Matrix4.identity()
-            ..setEntry(3, 2, 0.001)
-            ..rotateY(animation.value),
+          transform: transform,
           alignment: Alignment.center,
           child: child,
         );
@@ -30,8 +41,14 @@ class FlipInYCard extends StatelessWidget {
 class FlipCard extends StatefulWidget {
   final Widget front;
   final Widget back;
+  final int speed = 500;
+  final FlipDirection direction;
 
-  const FlipCard({Key key, @required this.front, @required this.back})
+  const FlipCard(
+      {Key key,
+      @required this.front,
+      @required this.back,
+      this.direction = FlipDirection.HORIZONTAL})
       : super(key: key);
 
   @override
@@ -51,8 +68,8 @@ class _FlipCardState extends State<FlipCard>
   @override
   void initState() {
     super.initState();
-    controller = new AnimationController(
-        duration: const Duration(milliseconds: 500), vsync: this);
+    controller = AnimationController(
+        duration: Duration(milliseconds: widget.speed), vsync: this);
     _frontRotation = TweenSequence(
       <TweenSequenceItem<double>>[
         TweenSequenceItem<double>(
@@ -97,13 +114,15 @@ class _FlipCardState extends State<FlipCard>
       child: Stack(
         fit: StackFit.expand,
         children: <Widget>[
-          FlipInYCard(
+          AnimationCard(
             animation: _frontRotation,
             child: widget.front,
+            direction: widget.direction,
           ),
-          FlipInYCard(
+          AnimationCard(
             animation: _backRotation,
             child: widget.back,
+            direction: widget.direction,
           ),
         ],
       ),
