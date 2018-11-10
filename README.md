@@ -1,6 +1,6 @@
 # flip_card
 
-flutter flip card
+A component that provides flip card animation. It could be used for hide and show details of a product.
 
 <p>
 <img src="https://github.com/fedeoo/flip_card/blob/master/screenshots/flip-h.gif?raw=true&v1" width="320" />
