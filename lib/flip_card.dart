@@ -43,12 +43,13 @@ class FlipCard extends StatefulWidget {
   final Widget back;
   final int speed = 500;
   final FlipDirection direction;
+  final bool fullScreen;
 
   const FlipCard(
       {Key key,
       @required this.front,
       @required this.back,
-      this.direction = FlipDirection.HORIZONTAL})
+      this.direction = FlipDirection.HORIZONTAL, this.fullScreen=true})
       : super(key: key);
 
   @override
@@ -98,7 +99,7 @@ class _FlipCardState extends State<FlipCard>
     ).animate(controller);
   }
 
-  _toggleCard() {
+  toggleCard() {
     if (isFront) {
       controller.forward();
     } else {
@@ -109,23 +110,40 @@ class _FlipCardState extends State<FlipCard>
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _toggleCard,
-      child: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          AnimationCard(
-            animation: _frontRotation,
-            child: widget.front,
-            direction: widget.direction,
-          ),
-          AnimationCard(
-            animation: _backRotation,
-            child: widget.back,
-            direction: widget.direction,
-          ),
-        ],
-      ),
+    if (this.widget.fullScreen) {
+      return GestureDetector(
+        onTap: toggleCard,
+        child: Stack(
+          fit: StackFit.expand,
+          children: <Widget>[
+            AnimationCard(
+              animation: _frontRotation,
+              child: widget.front,
+              direction: widget.direction,
+            ),
+            AnimationCard(
+              animation: _backRotation,
+              child: widget.back,
+              direction: widget.direction,
+            ),
+          ],
+        ),
+      );
+    }
+    return Stack(
+      fit: StackFit.expand,
+      children: <Widget>[
+        AnimationCard(
+          animation: _frontRotation,
+          child: widget.front,
+          direction: widget.direction,
+        ),
+        AnimationCard(
+          animation: _backRotation,
+          child: widget.back,
+          direction: widget.direction,
+        ),
+      ],
     );
   }
 
