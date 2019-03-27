@@ -13,4 +13,8 @@ class FlipBloc {
   void toggle(){
     _isFront.inStream(!_isFront.value);
   }
+
+  dispose(){
+    _isFront.dispose();
+  }
 }
