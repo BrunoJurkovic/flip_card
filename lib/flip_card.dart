@@ -99,7 +99,7 @@ class _FlipCardState extends State<FlipCard>
     ).animate(controller);
   }
 
-  toggleCard() {
+  get toggle => () {
     if (isFront) {
       controller.forward();
     } else {
@@ -112,7 +112,7 @@ class _FlipCardState extends State<FlipCard>
   Widget build(BuildContext context) {
     if (this.widget.fullScreen) {
       return GestureDetector(
-        onTap: toggleCard,
+        onTap: toggle,
         child: Stack(
           fit: StackFit.expand,
           children: <Widget>[
