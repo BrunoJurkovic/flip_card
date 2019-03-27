@@ -114,20 +114,11 @@ class _FlipCardState extends State<FlipCard>
     });
   }
 
-   _toggle() {
-    if (isFront) {
-      controller.forward();
-    } else {
-      controller.reverse();
-    }
-    isFront = !isFront;
-  }
-
   @override
   Widget build(BuildContext context) {
     if (this.widget.fullScreen) {
       return GestureDetector(
-        onTap: _toggle(),
+        onTap: _flipBloc.toggle,
         child: Stack(
           fit: StackFit.expand,
           children: <Widget>[
