@@ -1,6 +1,7 @@
 library flip_card;
 
 import 'dart:math';
+import 'package:flip_card/flipBloc.dart';
 import 'package:flutter/material.dart';
 
 enum FlipDirection {
@@ -63,6 +64,7 @@ class _FlipCardState extends State<FlipCard>
   AnimationController controller;
   Animation<double> _frontRotation;
   Animation<double> _backRotation;
+  FlipBloc _flipBloc;
 
   bool isFront = true;
 
@@ -99,20 +101,33 @@ class _FlipCardState extends State<FlipCard>
     ).animate(controller);
   }
 
-  get toggle => () {
+  void didChangeDependencies(){
+    super.didChangeDependencies();
+    _flipBloc=FlipBloc();
+    _flipBloc.isFront.listen((value){
+      if (value){
+        controller.forward();
+      } else {
+        controller.reverse();
+      }
+      _flipBloc.toggle();
+    });
+  }
+
+   _toggle() {
     if (isFront) {
       controller.forward();
     } else {
       controller.reverse();
     }
     isFront = !isFront;
-  };
+  }
 
   @override
   Widget build(BuildContext context) {
     if (this.widget.fullScreen) {
       return GestureDetector(
-        onTap: toggle,
+        onTap: _toggle(),
         child: Stack(
           fit: StackFit.expand,
           children: <Widget>[
