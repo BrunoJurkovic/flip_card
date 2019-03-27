@@ -106,7 +106,7 @@ class _FlipCardState extends State<FlipCard>
       controller.reverse();
     }
     isFront = !isFront;
-  }
+  };
 
   @override
   Widget build(BuildContext context) {
