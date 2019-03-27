@@ -107,7 +107,7 @@ class _FlipCardState extends State<FlipCard>
     super.didChangeDependencies();
     flipBloc=FlipProvider.of(context);
     flipBloc.isFront.listen((value){
-      if (value){
+      if (!value){
         controller.forward();
       } else {
         controller.reverse();
