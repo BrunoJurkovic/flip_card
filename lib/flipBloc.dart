@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:frideos/frideos.dart';
 
 class FlipBloc {
+
   FlipBloc(){
     _isFront.inStream(true);
   }

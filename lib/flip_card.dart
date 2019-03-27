@@ -112,7 +112,7 @@ class _FlipCardState extends State<FlipCard>
       } else {
         controller.reverse();
       }
-      flipBloc.toggle();
+      //flipBloc.toggle();
     });
   }
 
