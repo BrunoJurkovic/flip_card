@@ -43,16 +43,19 @@ class AnimationCard extends StatelessWidget {
 class FlipCard extends StatefulWidget {
   final Widget front;
   final Widget back;
-  final int speed = 500;
+  final int speed ;
   final FlipDirection direction;
   final bool fullScreen;
-
+  final FlipBloc flipBloc;
 
   const FlipCard(
       {Key key,
       @required this.front,
       @required this.back,
-      this.direction = FlipDirection.HORIZONTAL, this.fullScreen=true})
+      this.direction = FlipDirection.HORIZONTAL,
+      this.fullScreen=true,
+      this.flipBloc,
+      this.speed = 500,})
       : super(key: key);
 
   @override
@@ -66,7 +69,7 @@ class _FlipCardState extends State<FlipCard>
   AnimationController controller;
   Animation<double> _frontRotation;
   Animation<double> _backRotation;
-  FlipBloc flipBloc;
+
 
   //bool isFront = true;
 
@@ -105,14 +108,13 @@ class _FlipCardState extends State<FlipCard>
 
   void didChangeDependencies(){
     super.didChangeDependencies();
-    flipBloc=FlipProvider.of(context);
-    flipBloc.isFront.listen((value){
+
+    this.widget.flipBloc.isFront.listen((value){
       if (!value){
         controller.reverse();
       } else {
         controller.forward();
       }
-      //flipBloc.toggle();
     });
   }
 
@@ -121,7 +123,7 @@ class _FlipCardState extends State<FlipCard>
   Widget build(BuildContext context) {
     if (this.widget.fullScreen) {
       return GestureDetector(
-        onTap: flipBloc.toggle,
+        onTap: this.widget.flipBloc.toggle,
         child: Stack(
           fit: StackFit.expand,
           children: <Widget>[
