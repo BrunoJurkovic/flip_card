@@ -4,7 +4,7 @@ import 'package:frideos/frideos.dart';
 class FlipBloc {
 
   FlipBloc(){
-    //_isFront.value=true;
+    _isFront.value=true;
     print("Flipbloc");
   }
 
@@ -13,10 +13,6 @@ class FlipBloc {
   Stream<bool> get isFront => _isFront.stream;
 
   void toggle(){
-    if (_isFront.value==null) {
-     _isFront.value=true;
-     return;
-    }
     _isFront.inStream(!_isFront.value);
   }
 
