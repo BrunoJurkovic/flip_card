@@ -13,6 +13,10 @@ class FlipBloc {
   Stream<bool> get isFront => _isFront.stream;
 
   void toggle(){
+    if (_isFront.value=null) {
+     _isFront.value=true;
+     return;
+    }
     _isFront.inStream(!_isFront.value);
   }
 
