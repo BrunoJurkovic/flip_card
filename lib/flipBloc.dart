@@ -13,8 +13,9 @@ class FlipBloc {
   Stream<bool> get isFront => _isFront.stream;
 
   void toggle(){
-    print("toggle");
+    print("toggle  ${_isFront.value}");
     _isFront.inStream(!_isFront.value);
+    print ("toggled ${_isFront.value}");
   }
 
   dispose(){
