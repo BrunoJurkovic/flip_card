@@ -110,11 +110,10 @@ class _FlipCardState extends State<FlipCard>
     super.didChangeDependencies();
 
     this.widget.flipBloc.isFront.listen((value){
-      if (value==false){
+      if (!value){
         controller.reverse();
-      } else if (value==true){
-        controller.forward();
       }
+        controller.forward();
     });
   }
 
