@@ -70,7 +70,7 @@ class _FlipCardState extends State<FlipCard>
   Animation<double> _frontRotation;
   Animation<double> _backRotation;
 
-
+  int counter=0;
   //bool isFront = true;
 
   @override
@@ -108,7 +108,7 @@ class _FlipCardState extends State<FlipCard>
 
   void didChangeDependencies(){
     super.didChangeDependencies();
-    int counter=0;
+
     this.widget.flipBloc.isFront.listen((value){
       if (counter>0){
         if (!value){
