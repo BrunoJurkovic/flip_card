@@ -162,6 +162,5 @@ class _FlipCardState extends State<FlipCard>
   void dispose() {
     controller.dispose();
     super.dispose();
-    flipBloc.dispose();
   }
 }
