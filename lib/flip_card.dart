@@ -57,11 +57,11 @@ class FlipCard extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _FlipCardState();
+    return FlipCardState();
   }
 }
 
-class _FlipCardState extends State<FlipCard> with SingleTickerProviderStateMixin {
+class FlipCardState extends State<FlipCard> with SingleTickerProviderStateMixin {
   AnimationController controller;
   Animation<double> _frontRotation;
   Animation<double> _backRotation;
@@ -98,7 +98,7 @@ class _FlipCardState extends State<FlipCard> with SingleTickerProviderStateMixin
     ).animate(controller);
   }
 
-  _toggleCard() {
+  toggleCard() {
     if (widget.onFlip != null) {
       widget.onFlip();
     }
@@ -113,7 +113,7 @@ class _FlipCardState extends State<FlipCard> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _toggleCard,
+      onTap: toggleCard,
       child: Stack(
         fit: StackFit.expand,
         children: <Widget>[
