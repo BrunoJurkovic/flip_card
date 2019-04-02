@@ -41,13 +41,14 @@ class AnimationCard extends StatelessWidget {
 class FlipCard extends StatefulWidget {
   final Widget front;
   final Widget back;
-  final int speed = 500;
+  final int speed;
   final FlipDirection direction;
 
   const FlipCard(
       {Key key,
       @required this.front,
       @required this.back,
+      this.speed = 500,
       this.direction = FlipDirection.HORIZONTAL})
       : super(key: key);
 
