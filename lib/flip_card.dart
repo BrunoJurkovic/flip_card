@@ -1,6 +1,7 @@
 library flip_card;
 
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 enum FlipDirection {
@@ -43,12 +44,14 @@ class FlipCard extends StatefulWidget {
   final Widget back;
   final int speed;
   final FlipDirection direction;
+  final VoidCallback onFlip;
 
   const FlipCard(
       {Key key,
       @required this.front,
       @required this.back,
       this.speed = 500,
+      this.onFlip,
       this.direction = FlipDirection.HORIZONTAL})
       : super(key: key);
 
@@ -58,8 +61,7 @@ class FlipCard extends StatefulWidget {
   }
 }
 
-class _FlipCardState extends State<FlipCard>
-    with SingleTickerProviderStateMixin {
+class _FlipCardState extends State<FlipCard> with SingleTickerProviderStateMixin {
   AnimationController controller;
   Animation<double> _frontRotation;
   Animation<double> _backRotation;
@@ -69,13 +71,11 @@ class _FlipCardState extends State<FlipCard>
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(
-        duration: Duration(milliseconds: widget.speed), vsync: this);
+    controller = AnimationController(duration: Duration(milliseconds: widget.speed), vsync: this);
     _frontRotation = TweenSequence(
       <TweenSequenceItem<double>>[
         TweenSequenceItem<double>(
-          tween: Tween(begin: 0.0, end: pi / 2)
-              .chain(CurveTween(curve: Curves.linear)),
+          tween: Tween(begin: 0.0, end: pi / 2).chain(CurveTween(curve: Curves.linear)),
           weight: 50.0,
         ),
         TweenSequenceItem<double>(
@@ -91,8 +91,7 @@ class _FlipCardState extends State<FlipCard>
           weight: 50.0,
         ),
         TweenSequenceItem<double>(
-          tween: Tween(begin: -pi / 2, end: 0.0)
-              .chain(CurveTween(curve: Curves.linear)),
+          tween: Tween(begin: -pi / 2, end: 0.0).chain(CurveTween(curve: Curves.linear)),
           weight: 50.0,
         ),
       ],
@@ -100,6 +99,9 @@ class _FlipCardState extends State<FlipCard>
   }
 
   _toggleCard() {
+    if (widget.onFlip != null) {
+      widget.onFlip();
+    }
     if (isFront) {
       controller.forward();
     } else {
