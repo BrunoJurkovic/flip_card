@@ -33,6 +33,7 @@ Trigger the flip from outside the card;
 ```dart
 import 'package:flip_card/flipBloc.dart';
 import 'package:flip_card/flip_card.dart';
+import 'package:flutter/material.dart';
 
 class ContainingWidget extends StatefulWidget{
 
