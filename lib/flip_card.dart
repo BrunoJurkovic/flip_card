@@ -2,7 +2,6 @@ library flip_card;
 
 import 'dart:math';
 import 'package:flip_card/flipBloc.dart';
-import 'package:flip_card/provider.dart';
 import 'package:flutter/material.dart';
 
 enum FlipDirection {
@@ -112,10 +111,11 @@ class _FlipCardState extends State<FlipCard>
     this.widget.flipBloc.isFront.listen((value){
       print ("counter 0  $counter");
       if (counter==true){
-        if (!value){
+        if (value==false){
           controller.reverse();
-        }
+        } else {
           controller.forward();
+        }
       }
       counter=true;
       print("counter1 $counter");
