@@ -110,14 +110,14 @@ class _FlipCardState extends State<FlipCard>
 
     this.widget.flipBloc.isFront.listen((value){
       print ("counter 0  $counter");
-      if (counter==true){
+      //if (counter==true){
         if (value==false){
           controller.reverse();
         } else {
           controller.forward();
         }
-      }
-      counter=true;
+     // }
+     // counter=true;
       print("counter1 $counter");
     });
   }
