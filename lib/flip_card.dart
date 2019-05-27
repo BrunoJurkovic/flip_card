@@ -1,6 +1,7 @@
 library flip_card;
 
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 enum FlipDirection {
@@ -41,24 +42,26 @@ class AnimationCard extends StatelessWidget {
 class FlipCard extends StatefulWidget {
   final Widget front;
   final Widget back;
-  final int speed = 500;
+  final int speed;
   final FlipDirection direction;
+  final VoidCallback onFlip;
 
   const FlipCard(
       {Key key,
       @required this.front,
       @required this.back,
+      this.speed = 500,
+      this.onFlip,
       this.direction = FlipDirection.HORIZONTAL})
       : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _FlipCardState();
+    return FlipCardState();
   }
 }
 
-class _FlipCardState extends State<FlipCard>
-    with SingleTickerProviderStateMixin {
+class FlipCardState extends State<FlipCard> with SingleTickerProviderStateMixin {
   AnimationController controller;
   Animation<double> _frontRotation;
   Animation<double> _backRotation;
@@ -68,13 +71,11 @@ class _FlipCardState extends State<FlipCard>
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(
-        duration: Duration(milliseconds: widget.speed), vsync: this);
+    controller = AnimationController(duration: Duration(milliseconds: widget.speed), vsync: this);
     _frontRotation = TweenSequence(
       <TweenSequenceItem<double>>[
         TweenSequenceItem<double>(
-          tween: Tween(begin: 0.0, end: pi / 2)
-              .chain(CurveTween(curve: Curves.linear)),
+          tween: Tween(begin: 0.0, end: pi / 2).chain(CurveTween(curve: Curves.linear)),
           weight: 50.0,
         ),
         TweenSequenceItem<double>(
@@ -90,15 +91,17 @@ class _FlipCardState extends State<FlipCard>
           weight: 50.0,
         ),
         TweenSequenceItem<double>(
-          tween: Tween(begin: -pi / 2, end: 0.0)
-              .chain(CurveTween(curve: Curves.linear)),
+          tween: Tween(begin: -pi / 2, end: 0.0).chain(CurveTween(curve: Curves.linear)),
           weight: 50.0,
         ),
       ],
     ).animate(controller);
   }
 
-  _toggleCard() {
+  toggleCard() {
+    if (widget.onFlip != null) {
+      widget.onFlip();
+    }
     if (isFront) {
       controller.forward();
     } else {
@@ -110,7 +113,7 @@ class _FlipCardState extends State<FlipCard>
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _toggleCard,
+      onTap: toggleCard,
       child: Stack(
         fit: StackFit.expand,
         children: <Widget>[
