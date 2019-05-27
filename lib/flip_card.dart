@@ -107,10 +107,7 @@ class FlipCardState extends State<FlipCard> with SingleTickerProviderStateMixin 
     } else {
       controller.reverse();
     }
-
-    setState(() {
-      isFront = !isFront;
-    });
+    isFront = !isFront;
   }
 
   @override
@@ -120,21 +117,15 @@ class FlipCardState extends State<FlipCard> with SingleTickerProviderStateMixin 
       child: Stack(
         fit: StackFit.expand,
         children: <Widget>[
-          AbsorbPointer(
-            absorbing: !isFront,
-            child: AnimationCard(
-              animation: _frontRotation,
-              child: widget.front,
-              direction: widget.direction,
-            ),
+          AnimationCard(
+            animation: _frontRotation,
+            child: widget.front,
+            direction: widget.direction,
           ),
-          AbsorbPointer(
-            absorbing: isFront,
-            child: AnimationCard(
-              animation: _backRotation,
-              child: widget.back,
-              direction: widget.direction,
-            ),
+          AnimationCard(
+            animation: _backRotation,
+            child: widget.back,
+            direction: widget.direction,
           ),
         ],
       ),
