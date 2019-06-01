@@ -1,7 +1,6 @@
 library flip_card;
 
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 enum FlipDirection {
@@ -42,9 +41,25 @@ class AnimationCard extends StatelessWidget {
 class FlipCard extends StatefulWidget {
   final Widget front;
   final Widget back;
+
+  /// The amount of milliseconds a turn operation will take.
   final int speed;
   final FlipDirection direction;
   final VoidCallback onFlip;
+
+  /// When set to true, touch events that would reach the "background" of the
+  /// flip card (e.g. the side that is not currently shown), are blocked. When
+  /// set to false, the card will be transparent to touch events, meaning that
+  /// a user can still touch buttons on the background of the card, although
+  /// they are invisible.
+  /// Defaults to true.
+  final bool blockInactiveInteractions;
+
+  /// When enabled, the card will flip automatically when touched. This behavior
+  /// can be disabled if this is not desired. To manually flip a card from your
+  /// code, you could do this:
+  ///
+  final bool flipOnTouch;
 
   const FlipCard(
       {Key key,
@@ -52,7 +67,9 @@ class FlipCard extends StatefulWidget {
       @required this.back,
       this.speed = 500,
       this.onFlip,
-      this.direction = FlipDirection.HORIZONTAL})
+      this.direction = FlipDirection.HORIZONTAL,
+      this.blockInactiveInteractions = true,
+      this.flipOnTouch = true})
       : super(key: key);
 
   @override
@@ -61,7 +78,8 @@ class FlipCard extends StatefulWidget {
   }
 }
 
-class FlipCardState extends State<FlipCard> with SingleTickerProviderStateMixin {
+class FlipCardState extends State<FlipCard>
+    with SingleTickerProviderStateMixin {
   AnimationController controller;
   Animation<double> _frontRotation;
   Animation<double> _backRotation;
@@ -71,11 +89,13 @@ class FlipCardState extends State<FlipCard> with SingleTickerProviderStateMixin 
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(duration: Duration(milliseconds: widget.speed), vsync: this);
+    controller = AnimationController(
+        duration: Duration(milliseconds: widget.speed), vsync: this);
     _frontRotation = TweenSequence(
       <TweenSequenceItem<double>>[
         TweenSequenceItem<double>(
-          tween: Tween(begin: 0.0, end: pi / 2).chain(CurveTween(curve: Curves.linear)),
+          tween: Tween(begin: 0.0, end: pi / 2)
+              .chain(CurveTween(curve: Curves.linear)),
           weight: 50.0,
         ),
         TweenSequenceItem<double>(
@@ -91,14 +111,15 @@ class FlipCardState extends State<FlipCard> with SingleTickerProviderStateMixin 
           weight: 50.0,
         ),
         TweenSequenceItem<double>(
-          tween: Tween(begin: -pi / 2, end: 0.0).chain(CurveTween(curve: Curves.linear)),
+          tween: Tween(begin: -pi / 2, end: 0.0)
+              .chain(CurveTween(curve: Curves.linear)),
           weight: 50.0,
         ),
       ],
     ).animate(controller);
   }
 
-  toggleCard() {
+  void toggleCard() {
     if (widget.onFlip != null) {
       widget.onFlip();
     }
@@ -115,30 +136,43 @@ class FlipCardState extends State<FlipCard> with SingleTickerProviderStateMixin 
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: toggleCard,
-      child: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          AbsorbPointer(
-            absorbing: !isFront,
-            child: AnimationCard(
-              animation: _frontRotation,
-              child: widget.front,
-              direction: widget.direction,
-            ),
-          ),
-          AbsorbPointer(
-            absorbing: isFront,
-            child: AnimationCard(
-              animation: _backRotation,
-              child: widget.back,
-              direction: widget.direction,
-            ),
-          ),
-        ],
-      ),
+    final child = Stack(
+      fit: StackFit.expand,
+      children: <Widget>[
+        _buildContent(front: true),
+        _buildContent(front: false),
+      ],
     );
+
+    // if we need to flip the card on taps, wrap the content
+    if (widget.flipOnTouch) {
+      return GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: toggleCard,
+        child: child,
+      );
+    }
+    return child;
+  }
+
+  Widget _buildContent({@required bool front}) {
+    final card = AnimationCard(
+      animation: front ? _frontRotation : _backRotation,
+      child: front ? widget.front : widget.back,
+      direction: widget.direction,
+    );
+
+    // if we need to block background interactions, just ignore incoming pointer
+    // events for the subtree
+    if (widget.blockInactiveInteractions) {
+      return IgnorePointer(
+        // absorb the front card when the background is active (!isFront),
+        // absorb the background when the front is active
+        ignoring: front ? !isFront : isFront,
+        child: card,
+      );
+    }
+    return card;
   }
 
   @override
