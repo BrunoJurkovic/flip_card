@@ -42,7 +42,7 @@ class FlipCard extends StatefulWidget {
   final Widget front;
   final Widget back;
 
-  /// The amount of milliseconds a turn operation will take.
+  /// The amount of milliseconds a turn animation will take.
   final int speed;
   final FlipDirection direction;
   final VoidCallback onFlip;
@@ -58,7 +58,26 @@ class FlipCard extends StatefulWidget {
   /// When enabled, the card will flip automatically when touched. This behavior
   /// can be disabled if this is not desired. To manually flip a card from your
   /// code, you could do this:
+  ///```dart
+  /// GlobalKey<FlipCardState> cardKey = GlobalKey<FlipCardState>();
   ///
+  /// @override
+  /// Widget build(BuildContext context) {
+  ///   return FlipCard(
+  ///     key: cardKey,
+  ///     flipOnTouch: false,
+  ///     front: Container(
+  ///       child: RaisedButton(
+  ///         onPressed: () => cardKey.currentState.toggleCard(),
+  ///         child: Text('Toggle'),
+  ///       ),
+  ///     ),
+  ///     back: Container(
+  ///       child: Text('Back'),
+  ///     ),
+  ///   );
+  /// }
+  ///```
   final bool flipOnTouch;
 
   const FlipCard(
