@@ -28,7 +28,7 @@ FlipCard(
 );
 ```
 
-You can also configure the card to only flip when desired by using a `GlobalKey` to manage
+You can also configure the card to only flip when desired by using a `GlobalKey` to
 toggle the cards:
 ```dart
 GlobalKey<FlipCardState> cardKey = GlobalKey<FlipCardState>();
