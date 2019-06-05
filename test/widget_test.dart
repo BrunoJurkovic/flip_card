@@ -31,47 +31,26 @@ void main() {
     await tester.tap(find.byType(Stack));
   });
 
-  group('background interactions', () {
-    testWidgets('are blocked by default', (WidgetTester tester) async {
-      // check that background touches are blocked
-      bool backgroundTouched = false;
+  testWidgets('background interactions are ignored',
+      (WidgetTester tester) async {
+    // check that background touches are blocked
+    bool backgroundTouched = false;
 
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: new FlipCard(
-            front: Text('front'),
-            back: RaisedButton(
-              onPressed: () => backgroundTouched = true,
-              child: Text('back'),
-            ),
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: new FlipCard(
+          front: Text('front'),
+          back: RaisedButton(
+            onPressed: () => backgroundTouched = true,
+            child: Text('back'),
           ),
         ),
-      );
+      ),
+    );
 
-      await tester.tap(find.byType(RaisedButton));
-      expect(backgroundTouched, false);
-    });
-
-    testWidgets('can be turned on', (WidgetTester tester) async {
-      bool backgroundTouched = false;
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: new FlipCard(
-            front: Text('front'),
-            back: RaisedButton(
-              onPressed: () => backgroundTouched = true,
-              child: Text('back'),
-            ),
-            blockInactiveInteractions: false,
-          ),
-        ),
-      );
-
-      await tester.tap(find.byType(RaisedButton));
-      expect(backgroundTouched, true);
-    });
+    await tester.tap(find.byType(RaisedButton));
+    expect(backgroundTouched, false);
   });
 
   group('cards flip', () {

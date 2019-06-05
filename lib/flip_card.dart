@@ -47,14 +47,6 @@ class FlipCard extends StatefulWidget {
   final FlipDirection direction;
   final VoidCallback onFlip;
 
-  /// When set to true, touch events that would reach the "background" of the
-  /// flip card (e.g. the side that is not currently shown), are blocked. When
-  /// set to false, the card will be transparent to touch events, meaning that
-  /// a user can still touch buttons on the background of the card, although
-  /// they are invisible.
-  /// Defaults to true.
-  final bool blockInactiveInteractions;
-
   /// When enabled, the card will flip automatically when touched. This behavior
   /// can be disabled if this is not desired. To manually flip a card from your
   /// code, you could do this:
@@ -87,7 +79,6 @@ class FlipCard extends StatefulWidget {
       this.speed = 500,
       this.onFlip,
       this.direction = FlipDirection.HORIZONTAL,
-      this.blockInactiveInteractions = true,
       this.flipOnTouch = true})
       : super(key: key);
 
@@ -175,23 +166,18 @@ class FlipCardState extends State<FlipCard>
   }
 
   Widget _buildContent({@required bool front}) {
-    final card = AnimationCard(
-      animation: front ? _frontRotation : _backRotation,
-      child: front ? widget.front : widget.back,
-      direction: widget.direction,
+    // pointer events that would reach the backside of the card should be
+    // ignored
+    return IgnorePointer(
+      // absorb the front card when the background is active (!isFront),
+      // absorb the background when the front is active
+      ignoring: front ? !isFront : isFront,
+      child: AnimationCard(
+        animation: front ? _frontRotation : _backRotation,
+        child: front ? widget.front : widget.back,
+        direction: widget.direction,
+      ),
     );
-
-    // if we need to block background interactions, just ignore incoming pointer
-    // events for the subtree
-    if (widget.blockInactiveInteractions) {
-      return IgnorePointer(
-        // absorb the front card when the background is active (!isFront),
-        // absorb the background when the front is active
-        ignoring: front ? !isFront : isFront,
-        child: card,
-      );
-    }
-    return card;
   }
 
   @override
