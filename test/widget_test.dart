@@ -3,7 +3,6 @@
 // provides. For example, you can send tap and scroll gestures. You can also use WidgetTester to
 // find child widgets in the widget tree, read text, and verify that the values of widget properties
 // are correct.
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -14,25 +13,87 @@ void main() {
     // Build our app and trigger a frame.
     final frontKey = Key('front');
     final backKey = Key('back');
-    await tester.pumpWidget(new FlipCard(
-      front: Container(
-        key: frontKey,
-        child: Text('front'),
-      ),
-      back: Container(
-        key: backKey,
-        child: Text('back'),
+    await tester.pumpWidget(Directionality(
+      textDirection: TextDirection.ltr,
+      child: new FlipCard(
+        front: Container(
+          key: frontKey,
+          child: Text('front'),
+        ),
+        back: Container(
+          key: backKey,
+          child: Text('back'),
+        ),
       ),
     ));
 
-    expect(
-      tester
-      .widgetList<Text>(find.byType(Text)),
-    equals(2));
+    expect(find.byType(Text), findsNWidgets(2));
+    await tester.tap(find.byType(Stack));
+  });
 
-    tester.tap(find.byType(Stack));
+  testWidgets('background interactions are ignored',
+      (WidgetTester tester) async {
+    // check that background touches are blocked
+    bool backgroundTouched = false;
 
-    sleep(const Duration(seconds:1));
-    
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: new FlipCard(
+          front: Text('front'),
+          back: RaisedButton(
+            onPressed: () => backgroundTouched = true,
+            child: Text('back'),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byType(RaisedButton));
+    expect(backgroundTouched, false);
+  });
+
+  group('cards flip', () {
+    testWidgets('automatically', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: new FlipCard(
+            front: Text('front'),
+            back: Text('back'),
+          ),
+        ),
+      );
+      final state = tester.state<FlipCardState>(find.byType(FlipCard));
+
+      expect(state.isFront, isTrue);
+
+      await tester.tap(find.byType(FlipCard));
+      await tester.pumpAndSettle();
+
+      expect(state.isFront, isFalse);
+    });
+
+    testWidgets('manually', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: new FlipCard(
+            flipOnTouch: false,
+            front: Text('front'),
+            back: Text('back'),
+          ),
+        ),
+      );
+      final state = tester.state<FlipCardState>(find.byType(FlipCard));
+
+      await tester.tap(find.byType(FlipCard));
+      await tester.pumpAndSettle();
+      expect(state.isFront, true); // should not have turned by tapping
+
+      state.toggleCard();
+      await tester.pumpAndSettle();
+      expect(state.isFront, false);
+    });
   });
 }
