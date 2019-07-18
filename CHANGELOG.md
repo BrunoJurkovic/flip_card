@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+# 0.4.0
+Change: Stack layout fit to StackFit.passthrough from StackFit.expand
+
 # 0.3.0
 Added: Optional mode where the card can only be flipped programmatically
 

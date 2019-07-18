@@ -147,7 +147,7 @@ class FlipCardState extends State<FlipCard>
   @override
   Widget build(BuildContext context) {
     final child = Stack(
-      fit: StackFit.expand,
+      fit: StackFit.passthrough,
       children: <Widget>[
         _buildContent(front: true),
         _buildContent(front: false),

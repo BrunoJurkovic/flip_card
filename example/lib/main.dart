@@ -84,6 +84,7 @@ class HomePage extends StatelessWidget {
         children: <Widget>[
           _renderBg(),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               _renderAppBar(context),
               Expanded(
