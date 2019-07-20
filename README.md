@@ -1,4 +1,4 @@
-# flip_card
+# flip_card  [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/fedeoo/flip_card/pulls) [![Pub Package](https://img.shields.io/pub/v/flip_card.svg)](https://pub.dartlang.org/packages/flip_card)
 
 A component that provides flip card animation. It could be used for hide and show details of a product.
 
