@@ -41,6 +41,7 @@ class HomePage extends StatelessWidget {
       color: Color(0x00000000),
       child: FlipCard(
         direction: FlipDirection.HORIZONTAL,
+        speed: 1500,
         front: Container(
           decoration: BoxDecoration(
             color: Color(0xFF006666),
