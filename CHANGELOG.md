@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+# 0.4.2
+Add: Add animation completed callback
+
 # 0.4.1
 Change: Change animation to easeInOut from linear
 

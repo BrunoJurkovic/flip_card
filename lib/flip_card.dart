@@ -38,6 +38,8 @@ class AnimationCard extends StatelessWidget {
   }
 }
 
+typedef void BoolCallback(bool isFront);
+
 class FlipCard extends StatefulWidget {
   final Widget front;
   final Widget back;
@@ -46,6 +48,7 @@ class FlipCard extends StatefulWidget {
   final int speed;
   final FlipDirection direction;
   final VoidCallback onFlip;
+  final BoolCallback onFlipDone;
 
   /// When enabled, the card will flip automatically when touched. This behavior
   /// can be disabled if this is not desired. To manually flip a card from your
@@ -78,6 +81,7 @@ class FlipCard extends StatefulWidget {
       @required this.back,
       this.speed = 500,
       this.onFlip,
+      this.onFlipDone,
       this.direction = FlipDirection.HORIZONTAL,
       this.flipOnTouch = true})
       : super(key: key);
@@ -127,6 +131,12 @@ class FlipCardState extends State<FlipCard>
         ),
       ],
     ).animate(controller);
+    controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed ||
+          status == AnimationStatus.dismissed) {
+        if (widget.onFlipDone != null) widget.onFlipDone(isFront);
+      }
+    });
   }
 
   void toggleCard() {
