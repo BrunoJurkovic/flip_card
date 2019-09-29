@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+# 0.4.3
+Change: Change transform entry v to 0  
+
 # 0.4.2
 Add: Add animation completed callback
 
