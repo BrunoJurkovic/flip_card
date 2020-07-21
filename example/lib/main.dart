@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
+import './multiple_cards.dart';
 
 void main() => runApp(MyApp());
 
@@ -30,6 +31,21 @@ class HomePage extends StatelessWidget {
         brightness: Brightness.dark,
         elevation: 0.0,
         backgroundColor: Color(0x00FFFFFF),
+      ),
+    );
+  }
+
+  _renderMultipleContent(context) {
+    return Card(
+      elevation: 0.0,
+      margin: EdgeInsets.only(left: 32.0, right: 32.0, top: 20.0, bottom: 0.0),
+      color: Color(0x00000000),
+      child: MultipleCards(
+        direction: FlipDirection.HORIZONTAL,
+        speed: 1000,
+        onFlipDone: (status) {
+          print(status);
+        },
       ),
     );
   }
