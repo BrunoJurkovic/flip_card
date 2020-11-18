@@ -1,6 +1,7 @@
 library flip_card;
 
 import 'dart:math';
+import 'package:flip_card/flip_card.controller.dart';
 import 'package:flutter/material.dart';
 
 enum FlipDirection {
@@ -49,6 +50,7 @@ class FlipCard extends StatefulWidget {
   final FlipDirection direction;
   final VoidCallback onFlip;
   final BoolCallback onFlipDone;
+  final FlipCardController controller;
 
   /// When enabled, the card will flip automatically when touched. This behavior
   /// can be disabled if this is not desired. To manually flip a card from your
@@ -83,6 +85,7 @@ class FlipCard extends StatefulWidget {
       this.onFlip,
       this.onFlipDone,
       this.direction = FlipDirection.HORIZONTAL,
+      this.controller,
       this.flipOnTouch = true})
       : super(key: key);
 
@@ -137,12 +140,16 @@ class FlipCardState extends State<FlipCard>
         if (widget.onFlipDone != null) widget.onFlipDone(isFront);
       }
     });
+
+    widget?.controller?.state = this;
   }
 
   void toggleCard() {
     if (widget.onFlip != null) {
       widget.onFlip();
     }
+
+    controller.duration = Duration(milliseconds: widget.speed);
     if (isFront) {
       controller.forward();
     } else {
