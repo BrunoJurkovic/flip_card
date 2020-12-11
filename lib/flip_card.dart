@@ -77,17 +77,20 @@ class FlipCard extends StatefulWidget {
   ///```
   final bool flipOnTouch;
 
-  const FlipCard(
-      {Key key,
-      @required this.front,
-      @required this.back,
-      this.speed = 500,
-      this.onFlip,
-      this.onFlipDone,
-      this.direction = FlipDirection.HORIZONTAL,
-      this.controller,
-      this.flipOnTouch = true})
-      : super(key: key);
+  final Alignment alignment;
+
+  const FlipCard({
+    Key key,
+    @required this.front,
+    @required this.back,
+    this.speed = 500,
+    this.onFlip,
+    this.onFlipDone,
+    this.direction = FlipDirection.HORIZONTAL,
+    this.controller,
+    this.flipOnTouch = true,
+    this.alignment = Alignment.center,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -164,6 +167,7 @@ class FlipCardState extends State<FlipCard>
   @override
   Widget build(BuildContext context) {
     final child = Stack(
+      alignment: widget.alignment,
       fit: StackFit.passthrough,
       children: <Widget>[
         _buildContent(front: true),
