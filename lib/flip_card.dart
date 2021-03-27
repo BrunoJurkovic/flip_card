@@ -112,7 +112,7 @@ class FlipCardState extends State<FlipCard>
     controller = AnimationController(
         duration: Duration(milliseconds: widget.speed), vsync: this);
     _frontRotation = TweenSequence(
-      <TweenSequenceItem<double>>[
+      [
         TweenSequenceItem<double>(
           tween: Tween(begin: 0.0, end: pi / 2)
               .chain(CurveTween(curve: Curves.easeIn)),
@@ -125,7 +125,7 @@ class FlipCardState extends State<FlipCard>
       ],
     ).animate(controller!);
     _backRotation = TweenSequence(
-      <TweenSequenceItem<double>>[
+      [
         TweenSequenceItem<double>(
           tween: ConstantTween<double>(pi / 2),
           weight: 50.0,
@@ -175,7 +175,7 @@ class FlipCardState extends State<FlipCard>
       ],
     );
 
-    // if we need to flip the card on taps, wrap the content
+    /// if we need to flip the card on taps, wrap the content
     if (widget.flipOnTouch) {
       return GestureDetector(
         behavior: HitTestBehavior.translucent,
@@ -187,11 +187,11 @@ class FlipCardState extends State<FlipCard>
   }
 
   Widget _buildContent({required bool front}) {
-    // pointer events that would reach the backside of the card should be
-    // ignored
+    /// pointer events that would reach the backside of the card should be
+    /// ignored
     return IgnorePointer(
-      // absorb the front card when the background is active (!isFront),
-      // absorb the background when the front is active
+      /// absorb the front card when the background is active (!isFront),
+      /// absorb the background when the front is active
       ignoring: front ? !isFront : isFront,
       child: AnimationCard(
         animation: front ? _frontRotation : _backRotation,
