@@ -41,7 +41,7 @@ void main() {
         textDirection: TextDirection.ltr,
         child: new FlipCard(
           front: Text('front'),
-          back: RaisedButton(
+          back: TextButton(
             onPressed: () => backgroundTouched = true,
             child: Text('back'),
           ),
@@ -49,7 +49,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.byType(RaisedButton));
+    await tester.tap(find.byType(TextButton));
     expect(backgroundTouched, false);
   });
 
