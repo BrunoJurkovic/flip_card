@@ -9,6 +9,8 @@ enum FlipDirection {
   HORIZONTAL,
 }
 
+enum Fill { none, fillFront, fillBack }
+
 class AnimationCard extends StatelessWidget {
   AnimationCard({this.child, this.animation, this.direction});
 
@@ -51,6 +53,7 @@ class FlipCard extends StatefulWidget {
   final VoidCallback? onFlip;
   final BoolCallback? onFlipDone;
   final FlipCardController? controller;
+  final Fill fill;
 
   /// When enabled, the card will flip automatically when touched. This behavior
   /// can be disabled if this is not desired. To manually flip a card from your
@@ -90,6 +93,7 @@ class FlipCard extends StatefulWidget {
     this.controller,
     this.flipOnTouch = true,
     this.alignment = Alignment.center,
+    this.fill = Fill.none,
   }) : super(key: key);
 
   @override
@@ -166,12 +170,15 @@ class FlipCardState extends State<FlipCard>
 
   @override
   Widget build(BuildContext context) {
+    final frontPositioning = widget.fill == Fill.fillFront ? _fill : _noop;
+    final backPositioning = widget.fill == Fill.fillBack ? _fill : _noop;
+
     final child = Stack(
       alignment: widget.alignment,
       fit: StackFit.passthrough,
       children: <Widget>[
-        _buildContent(front: true),
-        _buildContent(front: false),
+        frontPositioning(_buildContent(front: true)),
+        backPositioning(_buildContent(front: false)),
       ],
     );
 
@@ -207,3 +214,6 @@ class FlipCardState extends State<FlipCard>
     super.dispose();
   }
 }
+
+Widget _fill(Widget child) => Positioned.fill(child: child);
+Widget _noop(Widget child) => child;
