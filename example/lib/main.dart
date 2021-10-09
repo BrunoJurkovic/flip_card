@@ -28,7 +28,6 @@ class HomePage extends StatelessWidget {
       context: context,
       removeBottom: true,
       child: AppBar(
-        brightness: Brightness.dark,
         elevation: 0.0,
         backgroundColor: Color(0x00FFFFFF),
       ),
