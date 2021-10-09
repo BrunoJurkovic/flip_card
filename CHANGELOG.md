@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+# 0.6.0
+POSSIBLY BREAKING: Changed isFlip to change *after* the animation if finished or discarded.
+Add: New expand option to size the front or back card to the other to maintain the illusion of an animation.
+
 # 0.4.4
 Change: Change back transform entry v  
 
