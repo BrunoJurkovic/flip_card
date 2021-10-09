@@ -145,6 +145,9 @@ class FlipCardState extends State<FlipCard>
       if (status == AnimationStatus.completed ||
           status == AnimationStatus.dismissed) {
         if (widget.onFlipDone != null) widget.onFlipDone!(isFront);
+        setState(() {
+          isFront = !isFront;
+        });
       }
     });
 
@@ -162,10 +165,6 @@ class FlipCardState extends State<FlipCard>
     } else {
       controller!.reverse();
     }
-
-    setState(() {
-      isFront = !isFront;
-    });
   }
 
   @override
