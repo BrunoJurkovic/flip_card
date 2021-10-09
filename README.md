@@ -1,6 +1,6 @@
 # flip_card  [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/fedeoo/flip_card/pulls) [![Pub Package](https://img.shields.io/pub/v/flip_card.svg)](https://pub.dartlang.org/packages/flip_card)
 
-A component that provides flip card animation. It could be used for hide and show details of a product.
+A component that provides a flip card animation. It could be used for hiding and showing details of a product.
 
 <p>
 <img src="https://github.com/fedeoo/flip_card/blob/master/screenshots/flip-h.gif?raw=true&v1" width="320" />
@@ -18,6 +18,7 @@ Create a flip card. The card will flip when touched
 
 ```dart
 FlipCard(
+  fill: Fill.fillBack, // Fill the back side of the card to make in the same size as the front.
   direction: FlipDirection.HORIZONTAL, // default
   front: Container(
         child: Text('Front'),
