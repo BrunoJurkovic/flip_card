@@ -9,6 +9,11 @@ enum FlipDirection {
   HORIZONTAL,
 }
 
+enum CardSide {
+  FRONT,
+  BACK,
+}
+
 enum Fill { none, fillFront, fillBack }
 
 class AnimationCard extends StatelessWidget {
@@ -54,6 +59,7 @@ class FlipCard extends StatefulWidget {
   final BoolCallback? onFlipDone;
   final FlipCardController? controller;
   final Fill fill;
+  final CardSide side;
 
   /// When enabled, the card will flip automatically when touched. This behavior
   /// can be disabled if this is not desired. To manually flip a card from your
@@ -94,26 +100,31 @@ class FlipCard extends StatefulWidget {
     this.flipOnTouch = true,
     this.alignment = Alignment.center,
     this.fill = Fill.none,
+    this.side = CardSide.FRONT,
   }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return FlipCardState();
+    return FlipCardState(this.side == CardSide.FRONT);
   }
 }
 
 class FlipCardState extends State<FlipCard>
     with SingleTickerProviderStateMixin {
+
   AnimationController? controller;
   Animation<double>? _frontRotation;
   Animation<double>? _backRotation;
 
-  bool isFront = true;
+  bool isFront;
+
+  FlipCardState(this.isFront);
 
   @override
   void initState() {
     super.initState();
     controller = AnimationController(
+        value: isFront ? 0.0 : 1.0,
         duration: Duration(milliseconds: widget.speed), vsync: this);
     _frontRotation = TweenSequence(
       [
