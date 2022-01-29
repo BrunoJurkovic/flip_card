@@ -5,10 +5,8 @@ import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 
 enum FlipDirection {
-  VERTICAL_TOPTOFRONT,
-  VERTICAL_TOPTOBACK,
-  HORIZONTAL_RIGHTTOFRONT,
-  HORIZONTAL_RIGHTTOBACK,
+  VERTICAL,
+  HORIZONTAL,
 }
 
 enum Fill { none, fillFront, fillBack }
@@ -27,20 +25,10 @@ class AnimationCard extends StatelessWidget {
       builder: (BuildContext context, Widget? child) {
         var transform = Matrix4.identity();
         transform.setEntry(3, 2, 0.001);
-        switch (direction) {
-          case FlipDirection.HORIZONTAL_RIGHTTOFRONT:
-            transform.rotateY(animation!.value);
-            break;
-          case FlipDirection.HORIZONTAL_RIGHTTOBACK:
-            transform.rotateY(-animation!.value);
-            break;
-          case FlipDirection.VERTICAL_TOPTOBACK:
-            transform.rotateX(animation!.value);
-            break;
-          case FlipDirection.VERTICAL_TOPTOFRONT:
-            transform.rotateX(animation!.value);
-            break;
-          default:
+        if (direction == FlipDirection.VERTICAL) {
+          transform.rotateX(animation!.value);
+        } else {
+          transform.rotateY(animation!.value);
         }
         return Transform(
           transform: transform,
@@ -101,7 +89,7 @@ class FlipCard extends StatefulWidget {
     this.speed = 500,
     this.onFlip,
     this.onFlipDone,
-    this.direction = FlipDirection.HORIZONTAL_RIGHTTOFRONT,
+    this.direction = FlipDirection.HORIZONTAL,
     this.controller,
     this.flipOnTouch = true,
     this.alignment = Alignment.center,
