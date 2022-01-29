@@ -41,6 +41,8 @@ class HomePage extends StatelessWidget {
       color: Color(0x00000000),
       child: FlipCard(
         direction: FlipDirection.HORIZONTAL,
+        reverse_direction: true,
+        continueTurnDirectionOnBackside: true,
         speed: 1000,
         onFlipDone: (status) {
           print(status);

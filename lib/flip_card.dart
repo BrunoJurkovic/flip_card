@@ -54,6 +54,8 @@ class FlipCard extends StatefulWidget {
   final BoolCallback? onFlipDone;
   final FlipCardController? controller;
   final Fill fill;
+  final bool reverse_direction;
+  final bool continueTurnDirectionOnBackside;
 
   /// When enabled, the card will flip automatically when touched. This behavior
   /// can be disabled if this is not desired. To manually flip a card from your
@@ -94,6 +96,8 @@ class FlipCard extends StatefulWidget {
     this.flipOnTouch = true,
     this.alignment = Alignment.center,
     this.fill = Fill.none,
+    this.reverse_direction = false,
+    this.continueTurnDirectionOnBackside = false,
   }) : super(key: key);
 
   @override
@@ -110,6 +114,8 @@ class FlipCardState extends State<FlipCard>
 
   bool isFront = true;
 
+  double get _endAngle => widget.reverse_direction ? -pi / 2 : pi / 2;
+
   @override
   void initState() {
     super.initState();
@@ -118,12 +124,12 @@ class FlipCardState extends State<FlipCard>
     _frontRotation = TweenSequence(
       [
         TweenSequenceItem<double>(
-          tween: Tween(begin: 0.0, end: pi / 2)
+          tween: Tween(begin: 0.0, end: _endAngle)
               .chain(CurveTween(curve: Curves.easeIn)),
           weight: 50.0,
         ),
         TweenSequenceItem<double>(
-          tween: ConstantTween<double>(pi / 2),
+          tween: ConstantTween<double>(_endAngle),
           weight: 50.0,
         ),
       ],
@@ -131,11 +137,13 @@ class FlipCardState extends State<FlipCard>
     _backRotation = TweenSequence(
       [
         TweenSequenceItem<double>(
-          tween: ConstantTween<double>(pi / 2),
+          tween: ConstantTween<double>(_endAngle),
           weight: 50.0,
         ),
         TweenSequenceItem<double>(
-          tween: Tween(begin: -pi / 2, end: 0.0)
+          tween: Tween(
+                  begin: -_endAngle,
+                  end: widget.continueTurnDirectionOnBackside ? pi : 0.0)
               .chain(CurveTween(curve: Curves.easeOut)),
           weight: 50.0,
         ),
