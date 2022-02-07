@@ -10,7 +10,11 @@ class FlipCardController {
 
   /// The underlying AnimationController.
   /// Use only if you know what you're doing!
-  AnimationController? get controller => state?.controller;
+  AnimationController? get controller {
+    assert(state != null,
+        'Controller not attached to any FlipCard. Did you forget to pass the controller to the FlipCard?');
+    return state!.controller;
+  }
 
   /// Flip the card
   void toggleCard() => state?.toggleCard();
