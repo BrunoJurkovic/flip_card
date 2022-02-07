@@ -53,6 +53,27 @@ void main() {
     expect(backgroundTouched, false);
   });
 
+  testWidgets('card initialized with back side', (WidgetTester tester) async {
+     await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: new FlipCard(
+            front: Text('front'),
+            back: Text('back'),
+            side: CardSide.BACK,
+          ),
+        ),
+      );
+      final state = tester.state<FlipCardState>(find.byType(FlipCard));
+
+      expect(state.isFront, isFalse);
+
+      await tester.tap(find.byType(FlipCard));
+      await tester.pumpAndSettle();
+
+      expect(state.isFront, isTrue);
+  });
+
   group('cards flip', () {
     testWidgets('automatically', (WidgetTester tester) async {
       await tester.pumpWidget(

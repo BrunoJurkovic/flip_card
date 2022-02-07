@@ -20,12 +20,13 @@ Create a flip card. The card will flip when touched
 FlipCard(
   fill: Fill.fillBack, // Fill the back side of the card to make in the same size as the front.
   direction: FlipDirection.HORIZONTAL, // default
+  side: CardSide.FRONT, // The side to initially display.
   front: Container(
-        child: Text('Front'),
-    ),
-    back: Container(
-        child: Text('Back'),
-    ),
+    child: Text('Front'),
+  ),
+  back: Container(
+    child: Text('Back'),
+  ),
 );
 ```
 
