@@ -3,6 +3,7 @@
 // provides. For example, you can send tap and scroll gestures. You can also use WidgetTester to
 // find child widgets in the widget tree, read text, and verify that the values of widget properties
 // are correct.
+import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -54,24 +55,24 @@ void main() {
   });
 
   testWidgets('card initialized with back side', (WidgetTester tester) async {
-     await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: new FlipCard(
-            front: Text('front'),
-            back: Text('back'),
-            side: CardSide.BACK,
-          ),
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: new FlipCard(
+          front: Text('front'),
+          back: Text('back'),
+          side: CardSide.BACK,
         ),
-      );
-      final state = tester.state<FlipCardState>(find.byType(FlipCard));
+      ),
+    );
+    final state = tester.state<FlipCardState>(find.byType(FlipCard));
 
-      expect(state.isFront, isFalse);
+    expect(state.isFront, isFalse);
 
-      await tester.tap(find.byType(FlipCard));
-      await tester.pumpAndSettle();
+    await tester.tap(find.byType(FlipCard));
+    await tester.pumpAndSettle();
 
-      expect(state.isFront, isTrue);
+    expect(state.isFront, isTrue);
   });
 
   group('cards flip', () {
@@ -112,7 +113,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(state.isFront, true); // should not have turned by tapping
 
-      state.toggleCard();
+      await state.toggleCard();
       await tester.pumpAndSettle();
       expect(state.isFront, false);
     });
@@ -137,6 +138,57 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(controller.state?.isFront, false);
+    });
+  });
+
+  group('skew', () {
+    testWidgets('skew keeps isFront unchanged', (WidgetTester tester) async {
+      final controller = FlipCardController();
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: new FlipCard(
+            controller: controller,
+            flipOnTouch: false,
+            front: Text('front'),
+            back: Text('back'),
+          ),
+        ),
+      );
+
+      final state = tester.state<FlipCardState>(find.byType(FlipCard));
+
+      await controller.skew(0.5);
+
+      await tester.pumpAndSettle();
+      expect(state.isFront, true);
+    });
+  });
+
+  group('hint', () {
+    testWidgets('hint keeps isFront unchanged', (WidgetTester tester) async {
+      final controller = FlipCardController();
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: new FlipCard(
+            controller: controller,
+            flipOnTouch: false,
+            front: Text('front'),
+            back: Text('back'),
+          ),
+        ),
+      );
+
+      final state = tester.state<FlipCardState>(find.byType(FlipCard));
+
+      await controller.hint(
+          duration: Duration(seconds: 1), total: Duration(seconds: 2));
+
+      await tester.pumpAndSettle();
+      expect(state.isFront, true);
     });
   });
 }
