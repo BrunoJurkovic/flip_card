@@ -116,5 +116,27 @@ void main() {
       await tester.pumpAndSettle();
       expect(state.isFront, false);
     });
+
+    testWidgets('manually via controller', (WidgetTester tester) async {
+      final controller = FlipCardController();
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: new FlipCard(
+            controller: controller,
+            flipOnTouch: false,
+            front: Text('front'),
+            back: Text('back'),
+          ),
+        ),
+      );
+      // final state = tester.state<FlipCardState>(find.byType(FlipCard));
+
+      await controller.toggleCard();
+      await tester.pumpAndSettle();
+
+      expect(controller.state?.isFront, false);
+    });
   });
 }
