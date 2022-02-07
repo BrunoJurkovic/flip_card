@@ -111,7 +111,6 @@ class FlipCard extends StatefulWidget {
 
 class FlipCardState extends State<FlipCard>
     with SingleTickerProviderStateMixin {
-
   AnimationController? controller;
   Animation<double>? _frontRotation;
   Animation<double>? _backRotation;
@@ -124,8 +123,10 @@ class FlipCardState extends State<FlipCard>
   void initState() {
     super.initState();
     controller = AnimationController(
-        value: isFront ? 0.0 : 1.0,
-        duration: Duration(milliseconds: widget.speed), vsync: this);
+      value: isFront ? 0.0 : 1.0,
+      duration: Duration(milliseconds: widget.speed),
+      vsync: this,
+    );
     _frontRotation = TweenSequence(
       [
         TweenSequenceItem<double>(
@@ -152,30 +153,24 @@ class FlipCardState extends State<FlipCard>
         ),
       ],
     ).animate(controller!);
-    controller!.addStatusListener((status) {
-      if (status == AnimationStatus.completed ||
-          status == AnimationStatus.dismissed) {
-        if (widget.onFlipDone != null) widget.onFlipDone!(isFront);
-        setState(() {
-          isFront = !isFront;
-        });
-      }
-    });
 
     widget.controller?.state = this;
   }
 
-  void toggleCard() {
-    if (widget.onFlip != null) {
-      widget.onFlip!();
-    }
+  /// Flip the card
+  /// If awaited, returns after animation completes.
+  Future<void> toggleCard() async {
+    widget.onFlip?.call();
 
+    final isFrontBefore = isFront;
     controller!.duration = Duration(milliseconds: widget.speed);
-    if (isFront) {
-      controller!.forward();
-    } else {
-      controller!.reverse();
-    }
+
+    final animation = isFront ? controller!.forward() : controller!.reverse();
+    animation.whenComplete(() {
+      if (widget.onFlipDone != null) widget.onFlipDone!(isFront);
+      if (!mounted) return;
+      setState(() => isFront = !isFrontBefore);
+    });
   }
 
   @override
