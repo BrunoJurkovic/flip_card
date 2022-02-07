@@ -17,7 +17,7 @@ class FlipCardController {
   }
 
   /// Flip the card
-  void toggleCard() => state?.toggleCard();
+  Future<void> toggleCard() async => await state?.toggleCard();
 
   /// Skew by amount percentage (0 - 1.0)
   /// This can be used with a MouseReagion to indicate that the card can
