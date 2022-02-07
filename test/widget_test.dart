@@ -9,13 +9,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flip_card/flip_card.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     final frontKey = Key('front');
     final backKey = Key('back');
     await tester.pumpWidget(Directionality(
       textDirection: TextDirection.ltr,
-      child: new FlipCard(
+      child: FlipCard(
         front: Container(
           key: frontKey,
           child: Text('front'),
@@ -49,7 +49,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.byType(TextButton));
+    await tester.tap(find.byType(TextButton), warnIfMissed: false);
     expect(backgroundTouched, false);
   });
 
