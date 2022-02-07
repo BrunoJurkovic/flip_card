@@ -17,11 +17,13 @@ class FlipCardController {
   }
 
   /// Flip the card
+  /// If awaited, returns after animation completes.
   Future<void> toggleCard() async => await state?.toggleCard();
 
   /// Skew by amount percentage (0 - 1.0)
   /// This can be used with a MouseReagion to indicate that the card can
   /// be flipped. skew(0) to go back to original.
+  /// If awaited, returns after animation completes.
   Future<void> skew(double amount, {Duration? duration, Curve? curve}) async {
     assert(0 <= amount && amount <= 1);
 
@@ -34,6 +36,7 @@ class FlipCardController {
 
   /// Triggers a flip animation that reverses after the duration
   /// and will run for `total`
+  /// If awaited, returns after animation completes.
   Future<void> hint({Duration? duration, Duration? total}) async {
     assert(controller is AnimationController);
     if (!(controller is AnimationController)) return;
