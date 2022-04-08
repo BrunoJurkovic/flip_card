@@ -102,7 +102,7 @@ class FlipCard extends StatefulWidget {
     this.alignment = Alignment.center,
     this.fill = Fill.none,
     this.side = CardSide.FRONT,
-    this.autoFlipDuration = const Duration(seconds: 1000),
+    this.autoFlipDuration,
   }) : super(key: key);
 
   @override
