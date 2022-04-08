@@ -60,6 +60,7 @@ class FlipCard extends StatefulWidget {
   final FlipCardController? controller;
   final Fill fill;
   final CardSide side;
+  final Duration? autoFlipDuration;
 
   /// When enabled, the card will flip automatically when touched. This behavior
   /// can be disabled if this is not desired. To manually flip a card from your
@@ -101,6 +102,7 @@ class FlipCard extends StatefulWidget {
     this.alignment = Alignment.center,
     this.fill = Fill.none,
     this.side = CardSide.FRONT,
+    this.autoFlipDuration = const Duration(seconds: 1000),
   }) : super(key: key);
 
   @override
@@ -155,6 +157,10 @@ class FlipCardState extends State<FlipCard>
     ).animate(controller!);
 
     widget.controller?.state = this;
+
+    if (widget.autoFlipDuration != null) {
+      Future.delayed(widget.autoFlipDuration!, () => toggleCard());
+    }
   }
 
   /// Flip the card
