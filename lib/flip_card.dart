@@ -51,6 +51,8 @@ typedef void BoolCallback(bool isFront);
 class FlipCard extends StatefulWidget {
   final Widget front;
   final Widget back;
+  //to add same decorations for each sides of card
+  final Widget Function(Widget child, bool isFront)? builder;
 
   /// The amount of milliseconds a turn animation will take.
   final int speed;
@@ -101,6 +103,7 @@ class FlipCard extends StatefulWidget {
     this.alignment = Alignment.center,
     this.fill = Fill.none,
     this.side = CardSide.FRONT,
+    this.builder,
   }) : super(key: key);
 
   @override
@@ -109,8 +112,7 @@ class FlipCard extends StatefulWidget {
   }
 }
 
-class FlipCardState extends State<FlipCard>
-    with SingleTickerProviderStateMixin {
+class FlipCardState extends State<FlipCard> with SingleTickerProviderStateMixin {
   AnimationController? controller;
   Animation<double>? _frontRotation;
   Animation<double>? _backRotation;
@@ -130,8 +132,7 @@ class FlipCardState extends State<FlipCard>
     _frontRotation = TweenSequence(
       [
         TweenSequenceItem<double>(
-          tween: Tween(begin: 0.0, end: pi / 2)
-              .chain(CurveTween(curve: Curves.easeIn)),
+          tween: Tween(begin: 0.0, end: pi / 2).chain(CurveTween(curve: Curves.easeIn)),
           weight: 50.0,
         ),
         TweenSequenceItem<double>(
@@ -147,8 +148,7 @@ class FlipCardState extends State<FlipCard>
           weight: 50.0,
         ),
         TweenSequenceItem<double>(
-          tween: Tween(begin: -pi / 2, end: 0.0)
-              .chain(CurveTween(curve: Curves.easeOut)),
+          tween: Tween(begin: -pi / 2, end: 0.0).chain(CurveTween(curve: Curves.easeOut)),
           weight: 50.0,
         ),
       ],
@@ -201,13 +201,19 @@ class FlipCardState extends State<FlipCard>
   Widget _buildContent({required bool front}) {
     /// pointer events that would reach the backside of the card should be
     /// ignored
+    var child = front ? widget.front : widget.back;
+    final builder = widget.builder;
+    if(builder != null){
+      child = builder(child, front);
+    }
+
     return IgnorePointer(
       /// absorb the front card when the background is active (!isFront),
       /// absorb the background when the front is active
       ignoring: front ? !isFront : isFront,
       child: AnimationCard(
         animation: front ? _frontRotation : _backRotation,
-        child: front ? widget.front : widget.back,
+        child: child,
         direction: widget.direction,
       ),
     );
@@ -221,4 +227,5 @@ class FlipCardState extends State<FlipCard>
 }
 
 Widget _fill(Widget child) => Positioned.fill(child: child);
+
 Widget _noop(Widget child) => child;
