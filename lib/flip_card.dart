@@ -112,7 +112,8 @@ class FlipCard extends StatefulWidget {
   }
 }
 
-class FlipCardState extends State<FlipCard> with SingleTickerProviderStateMixin {
+class FlipCardState extends State<FlipCard>
+    with SingleTickerProviderStateMixin {
   AnimationController? controller;
   Animation<double>? _frontRotation;
   Animation<double>? _backRotation;
@@ -132,7 +133,8 @@ class FlipCardState extends State<FlipCard> with SingleTickerProviderStateMixin 
     _frontRotation = TweenSequence(
       [
         TweenSequenceItem<double>(
-          tween: Tween(begin: 0.0, end: pi / 2).chain(CurveTween(curve: Curves.easeIn)),
+          tween: Tween(begin: 0.0, end: pi / 2)
+              .chain(CurveTween(curve: Curves.easeIn)),
           weight: 50.0,
         ),
         TweenSequenceItem<double>(
@@ -148,7 +150,8 @@ class FlipCardState extends State<FlipCard> with SingleTickerProviderStateMixin 
           weight: 50.0,
         ),
         TweenSequenceItem<double>(
-          tween: Tween(begin: -pi / 2, end: 0.0).chain(CurveTween(curve: Curves.easeOut)),
+          tween: Tween(begin: -pi / 2, end: 0.0)
+              .chain(CurveTween(curve: Curves.easeOut)),
           weight: 50.0,
         ),
       ],
