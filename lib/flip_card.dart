@@ -51,7 +51,7 @@ typedef void BoolCallback(bool isFront);
 class FlipCard extends StatefulWidget {
   final Widget front;
   final Widget back;
-  //to add same decorations for each sides of card
+  ///to wrap in same decoration each sides of card
   final Widget Function(Widget child, bool isFront)? builder;
 
   /// The amount of milliseconds a turn animation will take.
