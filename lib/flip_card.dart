@@ -102,8 +102,7 @@ class FlipCard extends StatefulWidget {
     this.alignment = Alignment.center,
     this.fill = Fill.none,
     this.side = CardSide.FRONT,
-    this.builder,
-  }) : super(key: key);
+  }) : builder = null, super(key: key);
 
   const FlipCard.builder({
     Key? key,
