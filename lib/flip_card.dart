@@ -49,10 +49,9 @@ class AnimationCard extends StatelessWidget {
 typedef void BoolCallback(bool isFront);
 
 class FlipCard extends StatefulWidget {
-  final Widget front;
-  final Widget back;
-  ///to wrap in same decoration each sides of card
-  final Widget Function(Widget child, bool isFront)? builder;
+  final Widget? front;
+  final Widget? back;
+  final Widget Function(BuildContext context, bool isFront)? builder;
 
   /// The amount of milliseconds a turn animation will take.
   final int speed;
@@ -105,6 +104,22 @@ class FlipCard extends StatefulWidget {
     this.side = CardSide.FRONT,
     this.builder,
   }) : super(key: key);
+
+  const FlipCard.builder({
+    Key? key,
+    this.speed = 500,
+    this.onFlip,
+    this.onFlipDone,
+    this.direction = FlipDirection.HORIZONTAL,
+    this.controller,
+    this.flipOnTouch = true,
+    this.alignment = Alignment.center,
+    this.fill = Fill.none,
+    this.side = CardSide.FRONT,
+    required this.builder,
+  })  : front = null,
+        back = null,
+        super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -204,10 +219,14 @@ class FlipCardState extends State<FlipCard>
   Widget _buildContent({required bool front}) {
     /// pointer events that would reach the backside of the card should be
     /// ignored
-    var child = front ? widget.front : widget.back;
     final builder = widget.builder;
-    if(builder != null){
-      child = builder(child, front);
+    late Widget child;
+    if (builder != null) {
+      child = Builder(
+        builder: (context) => builder(context, front),
+      );
+    } else {
+      child = front ? widget.front! : widget.back!;
     }
 
     return IgnorePointer(
