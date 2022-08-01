@@ -153,8 +153,6 @@ class FlipCardState extends State<FlipCard>
         ),
       ],
     ).animate(controller!);
-
-    widget.controller?.state = this;
   }
 
   /// Flip the card
@@ -175,6 +173,8 @@ class FlipCardState extends State<FlipCard>
 
   @override
   Widget build(BuildContext context) {
+    widget.controller?.state = this;
+    
     final frontPositioning = widget.fill == Fill.fillFront ? _fill : _noop;
     final backPositioning = widget.fill == Fill.fillBack ? _fill : _noop;
 
