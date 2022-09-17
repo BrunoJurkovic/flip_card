@@ -157,6 +157,11 @@ class FlipCardState extends State<FlipCard>
     widget.controller?.state = this;
   }
 
+  @override
+  void didUpdateWidget(FlipCard oldWidget) {
+    widget.controller?.state ??= this;
+  }
+
   /// Flip the card
   /// If awaited, returns after animation completes.
   Future<void> toggleCard() async {
