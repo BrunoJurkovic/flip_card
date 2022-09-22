@@ -49,8 +49,9 @@ class AnimationCard extends StatelessWidget {
 typedef void BoolCallback(bool isFront);
 
 class FlipCard extends StatefulWidget {
-  final Widget front;
-  final Widget back;
+  final Widget? front;
+  final Widget? back;
+  final Widget Function(BuildContext context, bool isFront)? builder;
 
   /// The amount of milliseconds a turn animation will take.
   final int speed;
@@ -101,7 +102,23 @@ class FlipCard extends StatefulWidget {
     this.alignment = Alignment.center,
     this.fill = Fill.none,
     this.side = CardSide.FRONT,
-  }) : super(key: key);
+  }) : builder = null, super(key: key);
+
+  const FlipCard.builder({
+    Key? key,
+    this.speed = 500,
+    this.onFlip,
+    this.onFlipDone,
+    this.direction = FlipDirection.HORIZONTAL,
+    this.controller,
+    this.flipOnTouch = true,
+    this.alignment = Alignment.center,
+    this.fill = Fill.none,
+    this.side = CardSide.FRONT,
+    required this.builder,
+  })  : front = null,
+        back = null,
+        super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -206,13 +223,23 @@ class FlipCardState extends State<FlipCard>
   Widget _buildContent({required bool front}) {
     /// pointer events that would reach the backside of the card should be
     /// ignored
+    final builder = widget.builder;
+    late Widget child;
+    if (builder != null) {
+      child = Builder(
+        builder: (context) => builder(context, front),
+      );
+    } else {
+      child = front ? widget.front! : widget.back!;
+    }
+
     return IgnorePointer(
       /// absorb the front card when the background is active (!isFront),
       /// absorb the background when the front is active
       ignoring: front ? !isFront : isFront,
       child: AnimationCard(
         animation: front ? _frontRotation : _backRotation,
-        child: front ? widget.front : widget.back,
+        child: child,
         direction: widget.direction,
       ),
     );
@@ -226,4 +253,5 @@ class FlipCardState extends State<FlipCard>
 }
 
 Widget _fill(Widget child) => Positioned.fill(child: child);
+
 Widget _noop(Widget child) => child;
