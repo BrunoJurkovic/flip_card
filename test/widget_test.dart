@@ -139,6 +139,28 @@ void main() {
 
       expect(controller.state?.isFront, false);
     });
+
+    testWidgets('manually via controller without animation',
+        (WidgetTester tester) async {
+      final controller = FlipCardController();
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: new FlipCard(
+            controller: controller,
+            flipOnTouch: false,
+            front: Text('front'),
+            back: Text('back'),
+          ),
+        ),
+      );
+
+      controller.toggleCardWithoutAnimation();
+      await tester.pumpAndSettle();
+
+      expect(controller.state?.isFront, false);
+    });
   });
 
   group('skew', () {

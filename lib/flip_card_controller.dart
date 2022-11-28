@@ -20,6 +20,9 @@ class FlipCardController {
   /// If awaited, returns after animation completes.
   Future<void> toggleCard() async => await state?.toggleCard();
 
+  /// Flip the card
+  void toggleCardWithoutAnimation() => state?.toggleCardWithoutAnimation();
+
   /// Skew by amount percentage (0 - 1.0)
   /// This can be used with a MouseReagion to indicate that the card can
   /// be flipped. skew(0) to go back to original.

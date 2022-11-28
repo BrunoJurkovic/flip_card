@@ -178,6 +178,21 @@ class FlipCardState extends State<FlipCard>
     });
   }
 
+  /// Flip the card without playing an animation
+  void toggleCardWithoutAnimation() {
+    widget.onFlip?.call();
+
+    final isFrontBefore = isFront;
+    controller!.duration = Duration(milliseconds: 0);
+
+    final animation = isFront ? controller!.forward() : controller!.reverse();
+    animation.whenComplete(() {
+      if (widget.onFlipDone != null) widget.onFlipDone!(isFront);
+      if (!mounted) return;
+      setState(() => isFront = !isFrontBefore);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final frontPositioning = widget.fill == Fill.fillFront ? _fill : _noop;
