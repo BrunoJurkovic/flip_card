@@ -157,7 +157,7 @@ void main() {
       );
 
       controller.toggleCardWithoutAnimation();
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(controller.state?.isFront, false);
     });

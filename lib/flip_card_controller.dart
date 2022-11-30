@@ -20,7 +20,8 @@ class FlipCardController {
   /// If awaited, returns after animation completes.
   Future<void> toggleCard() async => await state?.toggleCard();
 
-  /// Flip the card
+  /// Flip the card without playing an animation.
+  /// This cancels any ongoing animation.
   void toggleCardWithoutAnimation() => state?.toggleCardWithoutAnimation();
 
   /// Skew by amount percentage (0 - 1.0)
