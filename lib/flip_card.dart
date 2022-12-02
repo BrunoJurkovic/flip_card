@@ -60,6 +60,8 @@ class FlipCard extends StatefulWidget {
   final FlipCardController? controller;
   final Fill fill;
   final CardSide side;
+
+  /// If the value is set, the flip effect will work automatically after the specified duration.
   final Duration? autoFlipDuration;
 
   /// When enabled, the card will flip automatically when touched. This behavior

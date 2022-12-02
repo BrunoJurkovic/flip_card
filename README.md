@@ -84,3 +84,19 @@ void doStuff() {
   _controller.toggleCard();
 }
 ```
+
+You can auto-flip the widget after a certain delay without any external triggering.
+```dart
+FlipCard(
+  fill: Fill.fillBack, // Fill the back side of the card to make in the same size as the front.
+  direction: FlipDirection.HORIZONTAL, // default
+  side: CardSide.FRONT, // The side to initially display.
+  front: Container(
+    child: Text('Front'),
+  ),
+  back: Container(
+    child: Text('Back'),
+  ),
+  autoFlipDuration: const Duration(seconds: 2), // The flip effect will work automatically after the 2 seconds
+);
+```
