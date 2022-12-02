@@ -163,6 +163,11 @@ class FlipCardState extends State<FlipCard>
     }
   }
 
+  @override
+  void didUpdateWidget(FlipCard oldWidget) {
+    widget.controller?.state ??= this;
+  }
+
   /// Flip the card
   /// If awaited, returns after animation completes.
   Future<void> toggleCard() async {
@@ -176,6 +181,21 @@ class FlipCardState extends State<FlipCard>
       if (widget.onFlipDone != null) widget.onFlipDone!(isFront);
       if (!mounted) return;
       setState(() => isFront = !isFrontBefore);
+    });
+  }
+
+  /// Flip the card without playing an animation.
+  /// This cancels any ongoing animation.
+  void toggleCardWithoutAnimation() {
+    controller!.stop();
+
+    widget.onFlip?.call();
+
+    if (widget.onFlipDone != null) widget.onFlipDone!(isFront);
+
+    setState(() {
+      isFront = !isFront;
+      controller!.value = isFront ? 0.0 : 1.0;
     });
   }
 
