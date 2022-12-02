@@ -161,7 +161,7 @@ class FlipCardState extends State<FlipCard>
     widget.controller?.state = this;
 
     if (widget.autoFlipDuration != null) {
-      Future.delayed(widget.autoFlipDuration!, () => toggleCard());
+      Future.delayed(widget.autoFlipDuration!, toggleCard);
     }
   }
 
