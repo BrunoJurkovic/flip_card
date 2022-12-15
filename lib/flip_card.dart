@@ -61,6 +61,9 @@ class FlipCard extends StatefulWidget {
   final Fill fill;
   final CardSide side;
 
+  /// If the value is set, the flip effect will work automatically after the specified duration.
+  final Duration? autoFlipDuration;
+
   /// When enabled, the card will flip automatically when touched. This behavior
   /// can be disabled if this is not desired. To manually flip a card from your
   /// code, you could do this:
@@ -101,6 +104,7 @@ class FlipCard extends StatefulWidget {
     this.alignment = Alignment.center,
     this.fill = Fill.none,
     this.side = CardSide.FRONT,
+    this.autoFlipDuration,
   }) : super(key: key);
 
   @override
@@ -155,6 +159,10 @@ class FlipCardState extends State<FlipCard>
     ).animate(controller!);
 
     widget.controller?.state = this;
+
+    if (widget.autoFlipDuration != null) {
+      Future.delayed(widget.autoFlipDuration!, toggleCard);
+    }
   }
 
   @override
