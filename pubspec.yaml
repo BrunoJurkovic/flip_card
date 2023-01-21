@@ -1,10 +1,10 @@
 name: flip_card
 description: A component that provides flip card animation. It could be used for hide and show details of a product.
-version: 0.6.0
-homepage: https://github.com/fedeoo/flip_card/
+version: 0.7.0
+homepage: https://github.com/BrunoJurkovic/flip_card/
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
