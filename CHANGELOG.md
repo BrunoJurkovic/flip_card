@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.7.0] - 2023-01-21
+### Added
+
+- Add constructor option to build the card with the back face #56 - @Delgan
+- Added tests for skew() & hint() - @ciriousjoker
+- Added web platform to example - @ciriousjoker
+- skew(), hint() & toggleCard() are now async and complete after the animation is done - @ciriousjoker
+- Added one-time autoFlip feature without a FlipCardController. - @aydinfatih
+- Added function toggleCardWithoutAnimation to the controller that toggles the card instantly. - @Moseco
+
+### Fixed
+
+- isFront is incorrectly updated for skew & hint #60 - @ciriousjoker
+- Inaccurate controller state - @lwbvv
+
 # 0.6.0
 POSSIBLY BREAKING: Changed isFlip to change *after* the animation if finished or discarded.
 Add: New expand option to size the front or back card to the other to maintain the illusion of an animation.
