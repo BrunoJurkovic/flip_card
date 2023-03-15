@@ -37,6 +37,7 @@ class AnimationCard extends StatelessWidget {
         }
         return Transform(
           transform: transform,
+          filterQuality: FilterQuality.none,
           alignment: FractionalOffset.center,
           child: child,
         );
