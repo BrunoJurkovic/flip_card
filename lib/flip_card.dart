@@ -173,6 +173,8 @@ class FlipCardState extends State<FlipCard>
   /// Flip the card
   /// If awaited, returns after animation completes.
   Future<void> toggleCard() async {
+    if(!mounted) return;
+    
     widget.onFlip?.call();
 
     final isFrontBefore = isFront;
