@@ -142,6 +142,7 @@ class FlipCardState extends State<FlipCard>
   @override
   void dispose() {
     controller.dispose();
+    widget.controller?.state = null;
     super.dispose();
   }
 
