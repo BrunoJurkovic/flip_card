@@ -9,7 +9,7 @@ enum CardSide {
   back,
 }
 
-enum Fill { none, fillFront, fillBack }
+enum Fill { none, front, back }
 
 class AnimationCard extends StatelessWidget {
   const AnimationCard({
@@ -226,8 +226,8 @@ class FlipCardState extends State<FlipCard>
 
   @override
   Widget build(BuildContext context) {
-    final frontPositioning = widget.fill == Fill.fillFront ? _fill : _noop;
-    final backPositioning = widget.fill == Fill.fillBack ? _fill : _noop;
+    final frontPositioning = widget.fill == Fill.front ? _fill : _noop;
+    final backPositioning = widget.fill == Fill.back ? _fill : _noop;
 
     final child = Stack(
       alignment: widget.alignment,
