@@ -14,27 +14,31 @@ enum Fill { none, front, back }
 class AnimationCard extends StatelessWidget {
   const AnimationCard({
     Key? key,
-    this.child,
-    this.animation,
-    this.direction,
+    required this.child,
+    required this.animation,
+    required this.direction,
   }) : super(key: key);
 
-  final Animation<double>? animation;
-  final Widget? child;
-  final Axis? direction;
+  final Animation<double> animation;
+  final Widget child;
+  final Axis direction;
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: animation!,
+      animation: animation,
       builder: (BuildContext context, Widget? child) {
-        var transform = Matrix4.identity();
+        final transform = Matrix4.identity();
         transform.setEntry(3, 2, 0.001);
-        if (direction == Axis.vertical) {
-          transform.rotateX(animation!.value);
-        } else {
-          transform.rotateY(animation!.value);
+        switch (direction) {
+          case Axis.horizontal:
+            transform.rotateY(animation.value);
+            break;
+          case Axis.vertical:
+            transform.rotateX(animation.value);
+            break;
         }
+
         return Transform(
           transform: transform,
           filterQuality: FilterQuality.none,
@@ -253,6 +257,7 @@ class FlipCardState extends State<FlipCard>
         child: child,
       );
     }
+
     return child;
   }
 }
