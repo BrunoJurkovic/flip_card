@@ -61,7 +61,7 @@ void main() {
         child: new FlipCard(
           front: Text('front'),
           back: Text('back'),
-          side: CardSide.BACK,
+          side: CardSide.back,
         ),
       ),
     );

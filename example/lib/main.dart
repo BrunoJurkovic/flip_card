@@ -39,7 +39,7 @@ class HomePage extends StatelessWidget {
       color: Colors.black,
       child: FlipCard(
         direction: Axis.horizontal,
-        side: CardSide.FRONT,
+        side: CardSide.front,
         speed: 1000,
         onFlipDone: (status) {
           // ignore: avoid_print

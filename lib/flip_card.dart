@@ -5,17 +5,22 @@ import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 
 enum CardSide {
-  FRONT,
-  BACK,
+  front,
+  back,
 }
 
 enum Fill { none, fillFront, fillBack }
 
 class AnimationCard extends StatelessWidget {
-  AnimationCard({this.child, this.animation, this.direction});
+  const AnimationCard({
+    Key? key,
+    this.child,
+    this.animation,
+    this.direction,
+  }) : super(key: key);
 
-  final Widget? child;
   final Animation<double>? animation;
+  final Widget? child;
   final Axis? direction;
 
   @override
@@ -42,23 +47,34 @@ class AnimationCard extends StatelessWidget {
   }
 }
 
-typedef void BoolCallback(bool isFront);
+typedef BoolCallback = void Function(bool isFront);
 
 class FlipCard extends StatefulWidget {
-  final Widget front;
-  final Widget back;
+  const FlipCard({
+    Key? key,
+    required this.front,
+    required this.back,
+    this.speed = 500,
+    this.onFlip,
+    this.onFlipDone,
+    this.direction = Axis.horizontal,
+    this.controller,
+    this.flipOnTouch = true,
+    this.alignment = Alignment.center,
+    this.fill = Fill.none,
+    this.side = CardSide.front,
+    this.autoFlipDuration,
+  }) : super(key: key);
 
-  /// The amount of milliseconds a turn animation will take.
-  final int speed;
-  final Axis direction;
-  final VoidCallback? onFlip;
-  final BoolCallback? onFlipDone;
-  final FlipCardController? controller;
-  final Fill fill;
-  final CardSide side;
+  final Alignment alignment;
 
   /// If the value is set, the flip effect will work automatically after the specified duration.
   final Duration? autoFlipDuration;
+
+  final Widget back;
+  final FlipCardController? controller;
+  final Axis direction;
+  final Fill fill;
 
   /// When enabled, the card will flip automatically when touched. This behavior
   /// can be disabled if this is not desired. To manually flip a card from your
@@ -85,39 +101,38 @@ class FlipCard extends StatefulWidget {
   ///```
   final bool flipOnTouch;
 
-  final Alignment alignment;
+  final Widget front;
+  final VoidCallback? onFlip;
+  final BoolCallback? onFlipDone;
+  final CardSide side;
 
-  const FlipCard({
-    Key? key,
-    required this.front,
-    required this.back,
-    this.speed = 500,
-    this.onFlip,
-    this.onFlipDone,
-    this.direction = Axis.horizontal,
-    this.controller,
-    this.flipOnTouch = true,
-    this.alignment = Alignment.center,
-    this.fill = Fill.none,
-    this.side = CardSide.FRONT,
-    this.autoFlipDuration,
-  }) : super(key: key);
+  /// The amount of milliseconds a turn animation will take.
+  final int speed;
 
   @override
-  State<StatefulWidget> createState() {
-    return FlipCardState(this.side == CardSide.FRONT);
-  }
+  State<StatefulWidget> createState() => FlipCardState();
 }
 
 class FlipCardState extends State<FlipCard>
     with SingleTickerProviderStateMixin {
   AnimationController? controller;
-  Animation<double>? _frontRotation;
+
   Animation<double>? _backRotation;
+  Animation<double>? _frontRotation;
 
-  bool isFront;
+  late bool isFront = widget.side == CardSide.front;
 
-  FlipCardState(this.isFront);
+  @override
+  void didUpdateWidget(FlipCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    widget.controller?.state ??= this;
+  }
+
+  @override
+  void dispose() {
+    controller!.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -161,11 +176,6 @@ class FlipCardState extends State<FlipCard>
     }
   }
 
-  @override
-  void didUpdateWidget(FlipCard oldWidget) {
-    widget.controller?.state ??= this;
-  }
-
   /// Flip the card
   /// If awaited, returns after animation completes.
   Future<void> toggleCard() async {
@@ -199,6 +209,21 @@ class FlipCardState extends State<FlipCard>
     });
   }
 
+  Widget _buildContent({required bool front}) {
+    /// pointer events that would reach the backside of the card should be
+    /// ignored
+    return IgnorePointer(
+      /// absorb the front card when the background is active (!isFront),
+      /// absorb the background when the front is active
+      ignoring: front ? !isFront : isFront,
+      child: AnimationCard(
+        animation: front ? _frontRotation : _backRotation,
+        direction: widget.direction,
+        child: front ? widget.front : widget.back,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final frontPositioning = widget.fill == Fill.fillFront ? _fill : _noop;
@@ -222,27 +247,6 @@ class FlipCardState extends State<FlipCard>
       );
     }
     return child;
-  }
-
-  Widget _buildContent({required bool front}) {
-    /// pointer events that would reach the backside of the card should be
-    /// ignored
-    return IgnorePointer(
-      /// absorb the front card when the background is active (!isFront),
-      /// absorb the background when the front is active
-      ignoring: front ? !isFront : isFront,
-      child: AnimationCard(
-        animation: front ? _frontRotation : _backRotation,
-        child: front ? widget.front : widget.back,
-        direction: widget.direction,
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    controller!.dispose();
-    super.dispose();
   }
 }
 
