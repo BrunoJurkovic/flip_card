@@ -54,7 +54,7 @@ class FlipCard extends StatefulWidget {
     Key? key,
     required this.front,
     required this.back,
-    this.speed = 500,
+    this.duration = const Duration(milliseconds: 500),
     this.onFlip,
     this.onFlipDone,
     this.direction = Axis.horizontal,
@@ -71,6 +71,7 @@ class FlipCard extends StatefulWidget {
   /// If the value is set, the flip effect will work automatically after the specified duration.
   final Duration? autoFlipDuration;
 
+  final Widget front;
   final Widget back;
   final FlipCardController? controller;
   final Axis direction;
@@ -101,13 +102,12 @@ class FlipCard extends StatefulWidget {
   ///```
   final bool flipOnTouch;
 
-  final Widget front;
   final VoidCallback? onFlip;
   final BoolCallback? onFlipDone;
   final CardSide side;
 
-  /// The amount of milliseconds a turn animation will take.
-  final int speed;
+  /// The [Duration] a turn animation will take.
+  final Duration duration;
 
   @override
   State<StatefulWidget> createState() => FlipCardState();
@@ -125,7 +125,14 @@ class FlipCardState extends State<FlipCard>
   @override
   void didUpdateWidget(FlipCard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    widget.controller?.state ??= this;
+
+    if (widget.duration != oldWidget.duration) {
+      controller.duration = widget.duration;
+    }
+
+    if (widget.controller?.state != this) {
+      widget.controller?.state = this;
+    }
   }
 
   @override
@@ -139,7 +146,7 @@ class FlipCardState extends State<FlipCard>
     super.initState();
     controller = AnimationController(
       value: isFront ? 0.0 : 1.0,
-      duration: Duration(milliseconds: widget.speed),
+      duration: widget.duration,
       vsync: this,
     );
     _frontRotation = TweenSequence(
@@ -184,7 +191,7 @@ class FlipCardState extends State<FlipCard>
     widget.onFlip?.call();
 
     final isFrontBefore = isFront;
-    controller.duration = Duration(milliseconds: widget.speed);
+    controller.duration = widget.duration;
 
     final animation = isFront ? controller.forward() : controller.reverse();
     animation.whenComplete(() {
