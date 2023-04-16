@@ -10,7 +10,7 @@ class FlipCardController {
 
   /// The underlying AnimationController.
   /// Use only if you know what you're doing!
-  AnimationController? get controller {
+  AnimationController get controller {
     assert(state != null,
         'Controller not attached to any FlipCard. Did you forget to pass the controller to the FlipCard?');
     return state!.controller;
@@ -33,7 +33,7 @@ class FlipCardController {
 
     final target = state!.isFront ? amount : 1 - amount;
     await controller
-        ?.animateTo(target, duration: duration, curve: curve ?? Curves.linear)
+        .animateTo(target, duration: duration, curve: curve ?? Curves.linear)
         .asStream()
         .first;
   }
@@ -42,26 +42,23 @@ class FlipCardController {
   /// and will run for `total`
   /// If awaited, returns after animation completes.
   Future<void> hint({Duration? duration, Duration? total}) async {
-    assert(controller is AnimationController);
-    if (!(controller is AnimationController)) return;
+    if (controller.isAnimating || controller.value != 0) return;
 
-    if (controller!.isAnimating || controller!.value != 0) return;
-
-    final durationTotal = total ?? controller!.duration;
+    final durationTotal = total ?? controller.duration;
 
     final completer = Completer();
 
-    Duration? original = controller!.duration;
-    controller!.duration = durationTotal;
-    controller!.forward();
+    Duration? original = controller.duration;
+    controller.duration = durationTotal;
+    controller.forward();
 
     final durationFlipBack = duration ?? const Duration(milliseconds: 150);
 
     Timer(durationFlipBack, () {
-      controller!.reverse().whenComplete(() {
+      controller.reverse().whenComplete(() {
         completer.complete();
       });
-      controller!.duration = original;
+      controller.duration = original;
     });
 
     await completer.future;

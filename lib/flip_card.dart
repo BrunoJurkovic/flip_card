@@ -115,10 +115,10 @@ class FlipCard extends StatefulWidget {
 
 class FlipCardState extends State<FlipCard>
     with SingleTickerProviderStateMixin {
-  AnimationController? controller;
+  late AnimationController controller;
 
-  Animation<double>? _backRotation;
-  Animation<double>? _frontRotation;
+  late Animation<double> _backRotation;
+  late Animation<double> _frontRotation;
 
   late bool isFront = widget.side == CardSide.front;
 
@@ -130,7 +130,7 @@ class FlipCardState extends State<FlipCard>
 
   @override
   void dispose() {
-    controller!.dispose();
+    controller.dispose();
     super.dispose();
   }
 
@@ -154,7 +154,7 @@ class FlipCardState extends State<FlipCard>
           weight: 50.0,
         ),
       ],
-    ).animate(controller!);
+    ).animate(controller);
     _backRotation = TweenSequence(
       [
         TweenSequenceItem<double>(
@@ -167,7 +167,7 @@ class FlipCardState extends State<FlipCard>
           weight: 50.0,
         ),
       ],
-    ).animate(controller!);
+    ).animate(controller);
 
     widget.controller?.state = this;
 
@@ -184,9 +184,9 @@ class FlipCardState extends State<FlipCard>
     widget.onFlip?.call();
 
     final isFrontBefore = isFront;
-    controller!.duration = Duration(milliseconds: widget.speed);
+    controller.duration = Duration(milliseconds: widget.speed);
 
-    final animation = isFront ? controller!.forward() : controller!.reverse();
+    final animation = isFront ? controller.forward() : controller.reverse();
     animation.whenComplete(() {
       if (widget.onFlipDone != null) widget.onFlipDone!(isFront);
       if (!mounted) return;
@@ -197,7 +197,7 @@ class FlipCardState extends State<FlipCard>
   /// Flip the card without playing an animation.
   /// This cancels any ongoing animation.
   void toggleCardWithoutAnimation() {
-    controller!.stop();
+    controller.stop();
 
     widget.onFlip?.call();
 
@@ -205,7 +205,7 @@ class FlipCardState extends State<FlipCard>
 
     setState(() {
       isFront = !isFront;
-      controller!.value = isFront ? 0.0 : 1.0;
+      controller.value = isFront ? 0.0 : 1.0;
     });
   }
 
