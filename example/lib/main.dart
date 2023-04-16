@@ -38,7 +38,7 @@ class HomePage extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(32.0, 20.0, 32.0, 0.0),
       color: Colors.black,
       child: FlipCard(
-        direction: FlipDirection.HORIZONTAL,
+        direction: Axis.horizontal,
         side: CardSide.FRONT,
         speed: 1000,
         onFlipDone: (status) {

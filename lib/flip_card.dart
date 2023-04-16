@@ -4,11 +4,6 @@ import 'dart:math';
 import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 
-enum FlipDirection {
-  VERTICAL,
-  HORIZONTAL,
-}
-
 enum CardSide {
   FRONT,
   BACK,
@@ -21,7 +16,7 @@ class AnimationCard extends StatelessWidget {
 
   final Widget? child;
   final Animation<double>? animation;
-  final FlipDirection? direction;
+  final Axis? direction;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +25,7 @@ class AnimationCard extends StatelessWidget {
       builder: (BuildContext context, Widget? child) {
         var transform = Matrix4.identity();
         transform.setEntry(3, 2, 0.001);
-        if (direction == FlipDirection.VERTICAL) {
+        if (direction == Axis.vertical) {
           transform.rotateX(animation!.value);
         } else {
           transform.rotateY(animation!.value);
@@ -55,7 +50,7 @@ class FlipCard extends StatefulWidget {
 
   /// The amount of milliseconds a turn animation will take.
   final int speed;
-  final FlipDirection direction;
+  final Axis direction;
   final VoidCallback? onFlip;
   final BoolCallback? onFlipDone;
   final FlipCardController? controller;
@@ -99,7 +94,7 @@ class FlipCard extends StatefulWidget {
     this.speed = 500,
     this.onFlip,
     this.onFlipDone,
-    this.direction = FlipDirection.HORIZONTAL,
+    this.direction = Axis.horizontal,
     this.controller,
     this.flipOnTouch = true,
     this.alignment = Alignment.center,
@@ -174,8 +169,8 @@ class FlipCardState extends State<FlipCard>
   /// Flip the card
   /// If awaited, returns after animation completes.
   Future<void> toggleCard() async {
-    if(!mounted) return;
-    
+    if (!mounted) return;
+
     widget.onFlip?.call();
 
     final isFrontBefore = isFront;
