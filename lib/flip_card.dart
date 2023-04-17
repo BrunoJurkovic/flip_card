@@ -51,8 +51,6 @@ class AnimationCard extends StatelessWidget {
   }
 }
 
-typedef BoolCallback = void Function(bool isFront);
-
 class FlipCard extends StatefulWidget {
   const FlipCard({
     Key? key,
@@ -107,7 +105,7 @@ class FlipCard extends StatefulWidget {
   final bool flipOnTouch;
 
   final VoidCallback? onFlip;
-  final BoolCallback? onFlipDone;
+  final void Function(CardSide side)? onFlipDone;
   final CardSide side;
 
   /// The [Duration] a turn animation will take.
@@ -120,9 +118,6 @@ class FlipCard extends StatefulWidget {
 class FlipCardState extends State<FlipCard>
     with SingleTickerProviderStateMixin {
   late AnimationController controller;
-
-  late Animation<double> _backRotation;
-  late Animation<double> _frontRotation;
 
   late bool isFront = widget.side == CardSide.front;
 
@@ -154,32 +149,6 @@ class FlipCardState extends State<FlipCard>
       duration: widget.duration,
       vsync: this,
     );
-    _frontRotation = TweenSequence(
-      [
-        TweenSequenceItem<double>(
-          tween: Tween(begin: 0.0, end: pi / 2)
-              .chain(CurveTween(curve: Curves.easeIn)),
-          weight: 50.0,
-        ),
-        TweenSequenceItem<double>(
-          tween: ConstantTween<double>(pi / 2),
-          weight: 50.0,
-        ),
-      ],
-    ).animate(controller);
-    _backRotation = TweenSequence(
-      [
-        TweenSequenceItem<double>(
-          tween: ConstantTween<double>(pi / 2),
-          weight: 50.0,
-        ),
-        TweenSequenceItem<double>(
-          tween: Tween(begin: -pi / 2, end: 0.0)
-              .chain(CurveTween(curve: Curves.easeOut)),
-          weight: 50.0,
-        ),
-      ],
-    ).animate(controller);
 
     widget.controller?.state = this;
 
@@ -200,7 +169,7 @@ class FlipCardState extends State<FlipCard>
 
     final animation = isFront ? controller.forward() : controller.reverse();
     animation.whenComplete(() {
-      if (widget.onFlipDone != null) widget.onFlipDone!(isFront);
+      widget.onFlipDone?.call(isFront ? CardSide.front : CardSide.back);
       if (!mounted) return;
       setState(() => isFront = !isFrontBefore);
     });
@@ -210,10 +179,8 @@ class FlipCardState extends State<FlipCard>
   /// This cancels any ongoing animation.
   void toggleCardWithoutAnimation() {
     controller.stop();
-
     widget.onFlip?.call();
-
-    if (widget.onFlipDone != null) widget.onFlipDone!(isFront);
+    widget.onFlipDone?.call(isFront ? CardSide.front : CardSide.back);
 
     setState(() {
       isFront = !isFront;
@@ -221,33 +188,15 @@ class FlipCardState extends State<FlipCard>
     });
   }
 
-  Widget _buildContent({required bool front}) {
-    /// pointer events that would reach the backside of the card should be
-    /// ignored
-    return IgnorePointer(
-      /// absorb the front card when the background is active (!isFront),
-      /// absorb the background when the front is active
-      ignoring: front ? !isFront : isFront,
-      child: AnimationCard(
-        animation: front ? _frontRotation : _backRotation,
-        direction: widget.direction,
-        child: front ? widget.front : widget.back,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final frontPositioning = widget.fill == Fill.front ? _fill : _noop;
-    final backPositioning = widget.fill == Fill.back ? _fill : _noop;
-
-    final child = Stack(
+    final child = FlipCardTransition(
+      front: widget.front,
+      back: widget.back,
+      animation: controller,
+      direction: widget.direction,
+      fill: widget.fill,
       alignment: widget.alignment,
-      fit: StackFit.passthrough,
-      children: <Widget>[
-        frontPositioning(_buildContent(front: true)),
-        backPositioning(_buildContent(front: false)),
-      ],
     );
 
     /// if we need to flip the card on taps, wrap the content
@@ -265,3 +214,93 @@ class FlipCardState extends State<FlipCard>
 
 Widget _fill(Widget child) => Positioned.fill(child: child);
 Widget _noop(Widget child) => child;
+
+class FlipCardTransition extends StatelessWidget {
+  const FlipCardTransition({
+    Key? key,
+    required this.front,
+    required this.back,
+    required this.animation,
+    this.direction = Axis.horizontal,
+    this.fill = Fill.none,
+    this.alignment = Alignment.center,
+    this.frontAnimator,
+    this.backAnimator,
+  }) : super(key: key);
+
+  final Widget front;
+  final Widget back;
+  final Animation<double> animation;
+  final Axis direction;
+  final Fill fill;
+  final Alignment alignment;
+
+  final Animatable<double>? frontAnimator;
+  final Animatable<double>? backAnimator;
+
+  static final defaultFrontAnimator = TweenSequence(
+    [
+      TweenSequenceItem<double>(
+        tween: Tween(begin: 0.0, end: pi / 2).chain(
+          CurveTween(curve: Curves.easeIn),
+        ),
+        weight: 50.0,
+      ),
+      TweenSequenceItem<double>(
+        tween: ConstantTween<double>(pi / 2),
+        weight: 50.0,
+      ),
+    ],
+  );
+
+  static final defaultBackAnimator = TweenSequence(
+    [
+      TweenSequenceItem<double>(
+        tween: ConstantTween<double>(pi / 2),
+        weight: 50.0,
+      ),
+      TweenSequenceItem<double>(
+        tween: Tween(begin: -pi / 2, end: 0.0).chain(
+          CurveTween(curve: Curves.easeOut),
+        ),
+        weight: 50.0,
+      ),
+    ],
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final frontPositioning = fill == Fill.front ? _fill : _noop;
+    final backPositioning = fill == Fill.back ? _fill : _noop;
+
+    return Stack(
+      alignment: alignment,
+      fit: StackFit.passthrough,
+      children: <Widget>[
+        frontPositioning(_buildContent(child: front)),
+        backPositioning(_buildContent(child: back)),
+      ],
+    );
+  }
+
+  Widget _buildContent({required Widget child}) {
+    final isFront = child == front;
+    final showingFrontNow = animation.status == AnimationStatus.dismissed ||
+        animation.status == AnimationStatus.reverse;
+
+    /// pointer events that would reach the backside of the card should be
+    /// ignored
+    return IgnorePointer(
+      /// absorb the front card when the background is active (!isFront),
+      /// absorb the background when the front is active
+      ignoring: isFront ? !showingFrontNow : showingFrontNow,
+      child: AnimationCard(
+        animation: isFront
+            ? (frontAnimator ?? defaultFrontAnimator).animate(animation)
+            : (backAnimator ?? defaultBackAnimator).animate(animation),
+        direction: direction,
+        child: child,
+      ),
+    );
+  }
+}
