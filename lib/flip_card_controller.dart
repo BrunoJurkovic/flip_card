@@ -16,13 +16,15 @@ class FlipCardController {
     return state!.controller;
   }
 
-  /// Flip the card
-  /// If awaited, returns after animation completes.
-  Future<void> toggleCard() async => await state?.toggleCard();
+  /// Flips the card or reverses the direction of the current animation
+  ///
+  /// This function will complete when animation is done
+  Future<void> flip() async => await state?.flip();
 
   /// Flip the card without playing an animation.
+  ///
   /// This cancels any ongoing animation.
-  void toggleCardWithoutAnimation() => state?.toggleCardWithoutAnimation();
+  void flipWithoutAnimation() => state?.flipWithoutAnimation();
 
   /// Skew by amount percentage (0 - 1.0)
   /// This can be used with a MouseReagion to indicate that the card can

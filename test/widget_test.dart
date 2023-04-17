@@ -139,7 +139,7 @@ void main() {
         reason: 'Should not have turned by tapping',
       );
 
-      final future = state.toggleCard();
+      final future = state.flip();
       await tester.pumpAndSettle();
       await future;
       await tester.pumpAndSettle();
@@ -167,7 +167,7 @@ void main() {
       );
       // final state = tester.state<FlipCardState>(find.byType(FlipCard));
 
-      final future = controller.toggleCard();
+      final future = controller.flip();
       await tester.pumpAndSettle();
       await future;
       await tester.pumpAndSettle();
@@ -191,7 +191,7 @@ void main() {
         ),
       );
 
-      controller.toggleCardWithoutAnimation();
+      controller.flipWithoutAnimation();
       await tester.pump();
 
       expect(controller.state?.controller.status, AnimationStatus.completed);

@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 FilledButton(
-                  onPressed: () => _controller.toggleCard(),
+                  onPressed: () => _controller.flip(),
                   child: const Text('Toggle'),
                 ),
                 const SizedBox(width: 8.0),
