@@ -12,18 +12,16 @@ import 'package:flip_card/flip_card.dart';
 void main() {
   testWidgets('smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    final frontKey = Key('front');
-    final backKey = Key('back');
     await tester.pumpWidget(Directionality(
       textDirection: TextDirection.ltr,
       child: FlipCard(
         front: Container(
-          key: frontKey,
-          child: Text('front'),
+          key: const Key('front'),
+          child: const Text('front'),
         ),
         back: Container(
-          key: backKey,
-          child: Text('back'),
+          key: const Key('back'),
+          child: const Text('back'),
         ),
       ),
     ));
@@ -40,11 +38,11 @@ void main() {
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
-        child: new FlipCard(
-          front: Text('front'),
+        child: FlipCard(
+          front: const Text('front'),
           back: TextButton(
             onPressed: () => backgroundTouched = true,
-            child: Text('back'),
+            child: const Text('back'),
           ),
         ),
       ),
@@ -56,9 +54,9 @@ void main() {
 
   testWidgets('card initialized with back side', (WidgetTester tester) async {
     await tester.pumpWidget(
-      Directionality(
+      const Directionality(
         textDirection: TextDirection.ltr,
-        child: new FlipCard(
+        child: FlipCard(
           front: Text('front'),
           back: Text('back'),
           side: CardSide.back,
@@ -78,9 +76,9 @@ void main() {
   group('cards flip', () {
     testWidgets('automatically', (WidgetTester tester) async {
       await tester.pumpWidget(
-        Directionality(
+        const Directionality(
           textDirection: TextDirection.ltr,
-          child: new FlipCard(
+          child: FlipCard(
             front: Text('front'),
             back: Text('back'),
           ),
@@ -98,9 +96,9 @@ void main() {
 
     testWidgets('manually', (WidgetTester tester) async {
       await tester.pumpWidget(
-        Directionality(
+        const Directionality(
           textDirection: TextDirection.ltr,
-          child: new FlipCard(
+          child: FlipCard(
             flipOnTouch: false,
             front: Text('front'),
             back: Text('back'),
@@ -124,11 +122,11 @@ void main() {
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: new FlipCard(
+          child: FlipCard(
             controller: controller,
             flipOnTouch: false,
-            front: Text('front'),
-            back: Text('back'),
+            front: const Text('front'),
+            back: const Text('back'),
           ),
         ),
       );
@@ -147,11 +145,11 @@ void main() {
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: new FlipCard(
+          child: FlipCard(
             controller: controller,
             flipOnTouch: false,
-            front: Text('front'),
-            back: Text('back'),
+            front: const Text('front'),
+            back: const Text('back'),
           ),
         ),
       );
@@ -170,20 +168,21 @@ void main() {
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: new FlipCard(
+          child: FlipCard(
             controller: controller,
             flipOnTouch: false,
-            front: Text('front'),
-            back: Text('back'),
+            front: const Text('front'),
+            back: const Text('back'),
           ),
         ),
       );
 
       final state = tester.state<FlipCardState>(find.byType(FlipCard));
+      expect(state.isFront, true, reason: 'Expect initial isFront to be true');
 
-      await controller.skew(0.5);
-
+      controller.skew(0.2);
       await tester.pumpAndSettle();
+
       expect(state.isFront, true);
     });
   });
@@ -195,19 +194,19 @@ void main() {
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: new FlipCard(
+          child: FlipCard(
             controller: controller,
             flipOnTouch: false,
-            front: Text('front'),
-            back: Text('back'),
+            front: const Text('front'),
+            back: const Text('back'),
           ),
         ),
       );
 
       final state = tester.state<FlipCardState>(find.byType(FlipCard));
+      expect(state.isFront, true, reason: 'Expect initial isFront to be true');
 
-      await controller.hint(
-          duration: Duration(seconds: 1), total: Duration(seconds: 2));
+      controller.hint(target: 0.2, duration: const Duration(milliseconds: 200));
 
       await tester.pumpAndSettle();
       expect(state.isFront, true);
