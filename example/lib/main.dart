@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'FlipCard',
       theme: ThemeData(
         brightness: Brightness.dark,
-        colorSchemeSeed: Colors.green,
+        colorSchemeSeed: const Color(0xFF006666),
         useMaterial3: true,
       ),
       home: const HomePage(),
@@ -49,8 +49,11 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('FlipCard'),
       ),
-      body: SizedBox.expand(
-        child: _buildCard(context),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 64.0),
+        child: SizedBox.expand(
+          child: _buildCard(context),
+        ),
       ),
       bottomNavigationBar: Material(
         elevation: 3.0,
@@ -79,7 +82,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(width: 8.0),
                 FilledButton(
-                  onPressed: () => _controller.hint(),
+                  onPressed: () async => await _controller.hint(),
                   child: const Text('Hint'),
                 ),
               ],
@@ -98,54 +101,49 @@ class _HomePageState extends State<HomePage> {
     final paragraphStyle =
         theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onPrimary);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 64.0),
-      child: FlipCard(
-        direction: Axis.horizontal,
-        side: CardSide.front,
-        duration: const Duration(milliseconds: 1000),
-        controller: _controller,
-        onFlipDone: (status) {
-          // ignore: avoid_print
-          print(status);
-        },
-        front: Card(
-          color: theme.colorScheme.primary,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text('Front', style: titleStyle),
-              Text('Click here to flip back', style: paragraphStyle),
-              const SizedBox(height: 16.0),
-              OutlinedButton(
-                onPressed: () =>
-                    _showMessage(context, 'Clicked button on front'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: theme.colorScheme.onPrimary,
-                ),
-                child: const Text('Click me!'),
+    return FlipCard(
+      direction: Axis.horizontal,
+      initialSide: CardSide.front,
+      duration: const Duration(milliseconds: 1000),
+      controller: _controller,
+      onFlipDone: (status) {
+        // ignore: avoid_print
+        print(status);
+      },
+      front: Card(
+        color: theme.colorScheme.primary,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('Front', style: titleStyle),
+            Text('Click here to flip back', style: paragraphStyle),
+            const SizedBox(height: 16.0),
+            OutlinedButton(
+              onPressed: () => _showMessage(context, 'Clicked button on front'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: theme.colorScheme.onPrimary,
               ),
-            ],
-          ),
+              child: const Text('Click me!'),
+            ),
+          ],
         ),
-        back: Card(
-          color: theme.colorScheme.primary,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text('Back', style: titleStyle),
-              Text('Click here to flip front', style: paragraphStyle),
-              const SizedBox(height: 16.0),
-              OutlinedButton(
-                onPressed: () =>
-                    _showMessage(context, 'Clicked button on back'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: theme.colorScheme.onPrimary,
-                ),
-                child: const Text('Click me!'),
+      ),
+      back: Card(
+        color: theme.colorScheme.primary,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('Back', style: titleStyle),
+            Text('Click here to flip front', style: paragraphStyle),
+            const SizedBox(height: 16.0),
+            OutlinedButton(
+              onPressed: () => _showMessage(context, 'Clicked button on back'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: theme.colorScheme.onPrimary,
               ),
-            ],
-          ),
+              child: const Text('Click me!'),
+            ),
+          ],
         ),
       ),
     );
