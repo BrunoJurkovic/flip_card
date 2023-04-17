@@ -218,6 +218,7 @@ void main() {
       final future = controller.skew(0.2);
       await tester.pumpAndSettle();
       await future;
+      await tester.pumpAndSettle();
 
       expect(state.controller.status, AnimationStatus.completed);
     });
@@ -243,6 +244,7 @@ void main() {
       final future = controller.hint();
       await tester.pumpAndSettle();
       await future;
+      await tester.pumpAndSettle();
 
       expect(state.controller.status, AnimationStatus.dismissed);
     });

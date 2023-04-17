@@ -198,12 +198,12 @@ class FlipCardState extends State<FlipCard>
     switch (controller.status) {
       case AnimationStatus.dismissed:
       case AnimationStatus.reverse:
-        controller.value = 0.0;
-        widget.onFlipDone?.call(CardSide.front);
+        controller.value = 1.0;
+        widget.onFlipDone?.call(CardSide.back);
         break;
       case AnimationStatus.forward:
       case AnimationStatus.completed:
-        controller.value = 1.0;
+        controller.value = 0.0;
         widget.onFlipDone?.call(CardSide.front);
         break;
     }
