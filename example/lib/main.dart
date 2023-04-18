@@ -129,12 +129,20 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       back: Card(
-        color: theme.colorScheme.primary,
+        color: theme.colorScheme.secondary,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Back', style: titleStyle),
-            Text('Click here to flip front', style: paragraphStyle),
+            Text(
+              'Back',
+              style: theme.textTheme.displayLarge
+                  ?.copyWith(color: theme.colorScheme.onSecondary),
+            ),
+            Text(
+              'Click here to flip front',
+              style: theme.textTheme.bodyLarge
+                  ?.copyWith(color: theme.colorScheme.onSecondary),
+            ),
             const SizedBox(height: 16.0),
             OutlinedButton(
               onPressed: () => _showMessage(context, 'Clicked button on back'),
