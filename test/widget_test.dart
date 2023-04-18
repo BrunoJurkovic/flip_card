@@ -52,6 +52,36 @@ void main() {
     expect(backgroundTouched, false);
   });
 
+  testWidgets('background enabled when turned back', (widgetTester) async {
+    // check that background touches are blocked
+    bool backgroundTouched = false;
+
+    await widgetTester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: FlipCard(
+          front: const Text('front'),
+          back: TextButton(
+            onPressed: () => backgroundTouched = true,
+            child: const Text('back'),
+          ),
+        ),
+      ),
+    );
+
+    await widgetTester.tap(find.byType(FlipCard));
+    await widgetTester.pumpAndSettle();
+
+    final state = widgetTester.state<FlipCardState>(find.byType(FlipCard));
+    expect(state.controller.status, AnimationStatus.completed,
+        reason: 'Ensure card flipped back');
+
+    await widgetTester.tap(find.byType(TextButton));
+    await widgetTester.pumpAndSettle();
+
+    expect(backgroundTouched, true);
+  });
+
   group('initial side with', () {
     testWidgets('front side', (widgetTester) async {
       await widgetTester.pumpWidget(

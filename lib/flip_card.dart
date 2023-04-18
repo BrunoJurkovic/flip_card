@@ -24,13 +24,13 @@ extension on TickerFuture {
   }
 }
 
-class AnimationCard extends StatelessWidget {
+class AnimationCard extends AnimatedWidget {
   const AnimationCard({
     Key? key,
     required this.child,
     required this.animation,
     required this.direction,
-  }) : super(key: key);
+  }) : super(key: key, listenable: animation);
 
   final Animation<double> animation;
   final Widget child;
@@ -38,27 +38,20 @@ class AnimationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: animation,
-      builder: (BuildContext context, Widget? child) {
-        final transform = Matrix4.identity();
-        transform.setEntry(3, 2, 0.001);
-        switch (direction) {
-          case Axis.horizontal:
-            transform.rotateY(animation.value);
-            break;
-          case Axis.vertical:
-            transform.rotateX(animation.value);
-            break;
-        }
+    final transform = Matrix4.identity();
+    transform.setEntry(3, 2, 0.001);
+    switch (direction) {
+      case Axis.horizontal:
+        transform.rotateY(animation.value);
+        break;
+      case Axis.vertical:
+        transform.rotateX(animation.value);
+        break;
+    }
 
-        return Transform(
-          transform: transform,
-          filterQuality: FilterQuality.none,
-          alignment: FractionalOffset.center,
-          child: child,
-        );
-      },
+    return Transform(
+      transform: transform,
+      alignment: Alignment.center,
       child: child,
     );
   }
@@ -190,7 +183,7 @@ class FlipCardState extends State<FlipCard>
   }
 
   /// Flip the card without playing an animation.
-  ///
+  ///`
   /// This cancels any ongoing animation.
   void flipWithoutAnimation() {
     controller.stop();
@@ -237,7 +230,7 @@ class FlipCardState extends State<FlipCard>
 Widget _fill(Widget child) => Positioned.fill(child: child);
 Widget _noop(Widget child) => child;
 
-class FlipCardTransition extends StatelessWidget {
+class FlipCardTransition extends StatefulWidget {
   const FlipCardTransition({
     Key? key,
     required this.front,
@@ -291,36 +284,87 @@ class FlipCardTransition extends StatelessWidget {
   );
 
   @override
+  State<FlipCardTransition> createState() => _FlipCardTransitionState();
+}
+
+class _FlipCardTransitionState extends State<FlipCardTransition> {
+  late CardSide _currentSide;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentSide = _getSideFor(widget.animation.status);
+    widget.animation.addStatusListener(_handleChange);
+  }
+
+  @override
+  void didUpdateWidget(covariant FlipCardTransition oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.animation != oldWidget.animation) {
+      oldWidget.animation.removeStatusListener(_handleChange);
+      widget.animation.addStatusListener(_handleChange);
+      _currentSide = _getSideFor(widget.animation.status);
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    widget.animation.removeStatusListener(_handleChange);
+  }
+
+  CardSide _getSideFor(AnimationStatus status) {
+    switch (status) {
+      case AnimationStatus.dismissed:
+      case AnimationStatus.reverse:
+        return CardSide.front;
+      case AnimationStatus.forward:
+      case AnimationStatus.completed:
+        return CardSide.back;
+    }
+  }
+
+  void _handleChange(AnimationStatus status) {
+    final newSide = _getSideFor(status);
+    if (newSide != _currentSide) {
+      setState(() {
+        _currentSide = newSide;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final frontPositioning = fill == Fill.front ? _fill : _noop;
-    final backPositioning = fill == Fill.back ? _fill : _noop;
+    final frontPositioning = widget.fill == Fill.front ? _fill : _noop;
+    final backPositioning = widget.fill == Fill.back ? _fill : _noop;
 
     return Stack(
-      alignment: alignment,
+      alignment: widget.alignment,
       fit: StackFit.passthrough,
       children: <Widget>[
-        frontPositioning(_buildContent(child: front)),
-        backPositioning(_buildContent(child: back)),
+        frontPositioning(_buildContent(child: widget.front)),
+        backPositioning(_buildContent(child: widget.back)),
       ],
     );
   }
 
   Widget _buildContent({required Widget child}) {
-    final isFront = child == front;
-    final showingFrontNow = animation.status == AnimationStatus.dismissed ||
-        animation.status == AnimationStatus.reverse;
+    final isFront = child == widget.front;
+    final showingFront = _currentSide == CardSide.front;
 
     /// pointer events that would reach the backside of the card should be
     /// ignored
     return IgnorePointer(
       /// absorb the front card when the background is active (!isFront),
       /// absorb the background when the front is active
-      ignoring: isFront ? !showingFrontNow : showingFrontNow,
+      ignoring: isFront ? !showingFront : showingFront,
       child: AnimationCard(
         animation: isFront
-            ? (frontAnimator ?? defaultFrontAnimator).animate(animation)
-            : (backAnimator ?? defaultBackAnimator).animate(animation),
-        direction: direction,
+            ? (widget.frontAnimator ?? FlipCardTransition.defaultFrontAnimator)
+                .animate(widget.animation)
+            : (widget.backAnimator ?? FlipCardTransition.defaultBackAnimator)
+                .animate(widget.animation),
+        direction: widget.direction,
         child: child,
       ),
     );
