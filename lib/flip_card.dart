@@ -1,9 +1,10 @@
 library flip_card;
 
 import 'dart:async';
-import 'dart:math';
 import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
+
+import 'flip_card_transition.dart';
 
 enum CardSide {
   front,
@@ -21,39 +22,6 @@ extension on TickerFuture {
 
     orCancel.then(thunk, onError: thunk);
     return completer.future;
-  }
-}
-
-class AnimationCard extends AnimatedWidget {
-  const AnimationCard({
-    Key? key,
-    required this.child,
-    required this.animation,
-    required this.direction,
-  }) : super(key: key, listenable: animation);
-
-  final Animation<double> animation;
-  final Widget child;
-  final Axis direction;
-
-  @override
-  Widget build(BuildContext context) {
-    final transform = Matrix4.identity();
-    transform.setEntry(3, 2, 0.001);
-    switch (direction) {
-      case Axis.horizontal:
-        transform.rotateY(animation.value);
-        break;
-      case Axis.vertical:
-        transform.rotateX(animation.value);
-        break;
-    }
-
-    return Transform(
-      transform: transform,
-      alignment: Alignment.center,
-      child: child,
-    );
   }
 }
 
@@ -141,7 +109,6 @@ class FlipCardState extends State<FlipCard>
   @override
   void dispose() {
     controller.dispose();
-    widget.controller?.state = null;
     super.dispose();
   }
 
@@ -161,9 +128,11 @@ class FlipCardState extends State<FlipCard>
     }
   }
 
+  /// {@template flip_card.FlipCardState.flip}
   /// Flips the card or reverses the direction of the current animation
   ///
   /// This function will complete when animation is done
+  /// {@endtemplate}
   Future<void> flip() async {
     if (!mounted) return;
     widget.onFlip?.call();
@@ -182,9 +151,11 @@ class FlipCardState extends State<FlipCard>
     }
   }
 
+  /// {@template flip_card.FlipCardState.flipWithoutAnimation}
   /// Flip the card without playing an animation.
-  ///`
-  /// This cancels any ongoing animation.
+  ///
+  /// This will cancel any ongoing animation.
+  /// {@endtemplate}
   void flipWithoutAnimation() {
     controller.stop();
     widget.onFlip?.call();
@@ -200,6 +171,69 @@ class FlipCardState extends State<FlipCard>
         controller.value = 0.0;
         widget.onFlipDone?.call(CardSide.front);
         break;
+    }
+  }
+
+  /// {@template flip_card.FlipCardState.skew}
+  /// Skew the card by amount percentage (0 - 1.0)
+  ///
+  /// This can be used with a MouseReagion to indicate that the card can
+  /// be flipped. skew(0) to go back to original.
+  ///
+  /// This function returns a future that resolves when animation
+  /// completes
+  /// {@endtemplate}
+  Future<void> skew(double target, {Duration? duration, Curve? curve}) async {
+    assert(0 <= target && target <= 1);
+
+    if (target > controller.value) {
+      await controller.animateTo(
+        target,
+        duration: duration,
+        curve: curve ?? Curves.linear,
+      );
+    } else {
+      await controller.animateBack(
+        target,
+        duration: duration,
+        curve: curve ?? Curves.linear,
+      );
+    }
+  }
+
+  /// {@template flip_card.FlipCardState.hint}
+  /// Triggers a flip animation to [target] and back to 0 and completes in [duration].
+  ///
+  /// Calling [hint] when animating or when back side of the card is showed
+  /// does nothing
+  ///
+  /// This function returns a future that resolves when animation
+  /// completes
+  /// {@endtemplate}
+  Future<void> hint({
+    double target = 0.2,
+    Duration? duration,
+    Curve curveTo = Curves.easeInOut,
+    Curve curveBack = Curves.easeInOut,
+  }) async {
+    if (controller.status != AnimationStatus.dismissed) return;
+
+    duration = duration ?? controller.duration!;
+    final halfDuration =
+        Duration(milliseconds: (duration.inMilliseconds / 2).round());
+
+    try {
+      await controller.animateTo(
+        target,
+        duration: halfDuration,
+        curve: curveTo,
+      );
+    } finally {
+      await controller.animateBack(
+        0,
+        duration: halfDuration,
+        curve: curveBack,
+      );
     }
   }
 
@@ -224,149 +258,5 @@ class FlipCardState extends State<FlipCard>
     }
 
     return child;
-  }
-}
-
-Widget _fill(Widget child) => Positioned.fill(child: child);
-Widget _noop(Widget child) => child;
-
-class FlipCardTransition extends StatefulWidget {
-  const FlipCardTransition({
-    Key? key,
-    required this.front,
-    required this.back,
-    required this.animation,
-    this.direction = Axis.horizontal,
-    this.fill = Fill.none,
-    this.alignment = Alignment.center,
-    this.frontAnimator,
-    this.backAnimator,
-  }) : super(key: key);
-
-  final Widget front;
-  final Widget back;
-  final Animation<double> animation;
-  final Axis direction;
-  final Fill fill;
-  final Alignment alignment;
-
-  final Animatable<double>? frontAnimator;
-  final Animatable<double>? backAnimator;
-
-  static final defaultFrontAnimator = TweenSequence(
-    [
-      TweenSequenceItem<double>(
-        tween: Tween(begin: 0.0, end: pi / 2).chain(
-          CurveTween(curve: Curves.easeIn),
-        ),
-        weight: 50.0,
-      ),
-      TweenSequenceItem<double>(
-        tween: ConstantTween<double>(pi / 2),
-        weight: 50.0,
-      ),
-    ],
-  );
-
-  static final defaultBackAnimator = TweenSequence(
-    [
-      TweenSequenceItem<double>(
-        tween: ConstantTween<double>(pi / 2),
-        weight: 50.0,
-      ),
-      TweenSequenceItem<double>(
-        tween: Tween(begin: -pi / 2, end: 0.0).chain(
-          CurveTween(curve: Curves.easeOut),
-        ),
-        weight: 50.0,
-      ),
-    ],
-  );
-
-  @override
-  State<FlipCardTransition> createState() => _FlipCardTransitionState();
-}
-
-class _FlipCardTransitionState extends State<FlipCardTransition> {
-  late CardSide _currentSide;
-
-  @override
-  void initState() {
-    super.initState();
-    _currentSide = _getSideFor(widget.animation.status);
-    widget.animation.addStatusListener(_handleChange);
-  }
-
-  @override
-  void didUpdateWidget(covariant FlipCardTransition oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.animation != oldWidget.animation) {
-      oldWidget.animation.removeStatusListener(_handleChange);
-      widget.animation.addStatusListener(_handleChange);
-      _currentSide = _getSideFor(widget.animation.status);
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    widget.animation.removeStatusListener(_handleChange);
-  }
-
-  CardSide _getSideFor(AnimationStatus status) {
-    switch (status) {
-      case AnimationStatus.dismissed:
-      case AnimationStatus.reverse:
-        return CardSide.front;
-      case AnimationStatus.forward:
-      case AnimationStatus.completed:
-        return CardSide.back;
-    }
-  }
-
-  void _handleChange(AnimationStatus status) {
-    final newSide = _getSideFor(status);
-    if (newSide != _currentSide) {
-      setState(() {
-        _currentSide = newSide;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final frontPositioning = widget.fill == Fill.front ? _fill : _noop;
-    final backPositioning = widget.fill == Fill.back ? _fill : _noop;
-
-    return Stack(
-      alignment: widget.alignment,
-      fit: StackFit.passthrough,
-      children: <Widget>[
-        frontPositioning(_buildContent(child: widget.front)),
-        backPositioning(_buildContent(child: widget.back)),
-      ],
-    );
-  }
-
-  Widget _buildContent({required Widget child}) {
-    final isFront = child == widget.front;
-    final showingFront = _currentSide == CardSide.front;
-
-    /// pointer events that would reach the backside of the card should be
-    /// ignored
-    return IgnorePointer(
-      /// absorb the front card when the background is active (!isFront),
-      /// absorb the background when the front is active
-      ignoring: isFront ? !showingFront : showingFront,
-      child: AnimationCard(
-        animation: isFront
-            ? (widget.frontAnimator ?? FlipCardTransition.defaultFrontAnimator)
-                .animate(widget.animation)
-            : (widget.backAnimator ?? FlipCardTransition.defaultBackAnimator)
-                .animate(widget.animation),
-        direction: widget.direction,
-        child: child,
-      ),
-    );
   }
 }
