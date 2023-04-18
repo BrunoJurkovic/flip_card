@@ -149,12 +149,12 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _showMessage(
+  void _showMessage(
     BuildContext context,
     String message,
   ) {
-    return ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 }
