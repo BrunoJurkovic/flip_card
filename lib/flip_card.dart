@@ -108,12 +108,6 @@ class FlipCardState extends State<FlipCard>
   }
 
   @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
-  @override
   void initState() {
     super.initState();
     controller = AnimationController(
@@ -127,6 +121,13 @@ class FlipCardState extends State<FlipCard>
     if (widget.autoFlipDuration != null) {
       Future.delayed(widget.autoFlipDuration!, flip);
     }
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    widget.controller?.state = null;
+    super.dispose();
   }
 
   /// {@template flip_card.FlipCardState.flip}

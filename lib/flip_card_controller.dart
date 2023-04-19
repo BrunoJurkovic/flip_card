@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
 
 class FlipCardController {
-  /// The internal widget state.
-  /// Use only if you know what you're doing!
   FlipCardState? _internalState;
 
+  /// The internal widget state. Use only if you know what you're doing!
+  ///
+  /// This will throw an [AssertionError] if controller has not been
+  /// assigned to a [FlipCard] widget or state has not been initialized
   FlipCardState get state {
     assert(
       _internalState != null,
@@ -16,7 +18,8 @@ class FlipCardController {
     return _internalState!;
   }
 
-  set state(FlipCardState value) => _internalState = value;
+  /// Set the internal state
+  set state(FlipCardState? value) => _internalState = value;
 
   /// {@macro flip_card.FlipCardState.flip}
   Future<void> flip() async => await state.flip();
