@@ -42,15 +42,30 @@ class FlipCard extends StatefulWidget {
     this.autoFlipDuration,
   }) : super(key: key);
 
+  /// The initially shown side of the card
+  final CardSide initialSide;
+
+  /// The alignment of [front] and [back]
   final Alignment alignment;
 
   /// If the value is set, the flip effect will work automatically after the specified duration.
   final Duration? autoFlipDuration;
 
+  /// The widget rendered on the front side
   final Widget front;
+
+  /// The widget rendered on the back side
   final Widget back;
+
+  /// Assign a controller to the [FlipCard] to control it programmatically
+  ///
+  /// {@macro flip_card_controller.example}
   final FlipCardController? controller;
+
+  /// The animation [Axis] of the card
   final Axis direction;
+
+  /// Whether to fill a side of the card relative to the other
   final Fill fill;
 
   /// When enabled, the card will flip automatically when touched. This behavior
@@ -78,10 +93,12 @@ class FlipCard extends StatefulWidget {
   ///```
   final bool flipOnTouch;
 
-  /// Called
+  /// This callback is triggered when the card flipping is started
   final VoidCallback? onFlip;
+
+  /// This callback is triggered when the card flipping is completed
+  /// with the final [CardSide]
   final void Function(CardSide side)? onFlipDone;
-  final CardSide initialSide;
 
   /// The [Duration] a turn animation will take.
   final Duration duration;

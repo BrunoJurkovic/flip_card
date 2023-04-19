@@ -3,6 +3,33 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
 
+/// A controller used with [FlipCard] to control it programmatically
+///
+/// {@template flip_card_controller.example}
+/// ## Example
+///
+/// Inside a stateful widgets state do the following:
+///
+/// ```dart
+/// late FlipCardController controller = FlipCardController();
+///
+/// @override
+/// Widget build(BuildContext context) {
+///   return FlipCard(
+///     controller: controller,
+///     flipOnTouch: false,
+///     front: RaisedButton(
+///       onPressed: controller.flip,
+///       child: const Text('Front'),
+///     ),
+///     back: RaisedButton(
+///       onPressed: controller.flip,
+///       child: const Text('Back'),
+///     ),
+///   );
+/// }
+/// ```
+/// {@endtemplate}
 class FlipCardController {
   FlipCardState? _internalState;
 
