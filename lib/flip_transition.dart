@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 Widget _fill(Widget child) => Positioned.fill(child: child);
 Widget _noop(Widget child) => child;
 
-class FlipCardTransition extends StatefulWidget {
-  const FlipCardTransition({
+class FlipTransition extends StatefulWidget {
+  const FlipTransition({
     Key? key,
     required this.front,
     required this.back,
@@ -60,10 +60,10 @@ class FlipCardTransition extends StatefulWidget {
   );
 
   @override
-  State<FlipCardTransition> createState() => _FlipCardTransitionState();
+  State<FlipTransition> createState() => _FlipTransitionState();
 }
 
-class _FlipCardTransitionState extends State<FlipCardTransition> {
+class _FlipTransitionState extends State<FlipTransition> {
   late CardSide _currentSide;
 
   @override
@@ -74,7 +74,7 @@ class _FlipCardTransitionState extends State<FlipCardTransition> {
   }
 
   @override
-  void didUpdateWidget(covariant FlipCardTransition oldWidget) {
+  void didUpdateWidget(covariant FlipTransition oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.animation != oldWidget.animation) {
       oldWidget.animation.removeStatusListener(_handleChange);
@@ -136,9 +136,9 @@ class _FlipCardTransitionState extends State<FlipCardTransition> {
       ignoring: isFront ? !showingFront : showingFront,
       child: AnimationCard(
         animation: isFront
-            ? (widget.frontAnimator ?? FlipCardTransition.defaultFrontAnimator)
+            ? (widget.frontAnimator ?? FlipTransition.defaultFrontAnimator)
                 .animate(widget.animation)
-            : (widget.backAnimator ?? FlipCardTransition.defaultBackAnimator)
+            : (widget.backAnimator ?? FlipTransition.defaultBackAnimator)
                 .animate(widget.animation),
         direction: widget.direction,
         child: child,

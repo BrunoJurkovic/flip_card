@@ -202,7 +202,7 @@ void main() {
       await future;
       await tester.pumpAndSettle();
 
-      expect(controller.state?.controller.status, AnimationStatus.completed);
+      expect(controller.state.controller.status, AnimationStatus.completed);
     });
 
     testWidgets('manually via controller without animation',
@@ -224,7 +224,7 @@ void main() {
       controller.flipWithoutAnimation();
       await tester.pump();
 
-      expect(controller.state?.controller.status, AnimationStatus.completed);
+      expect(controller.state.controller.status, AnimationStatus.completed);
     });
   });
 

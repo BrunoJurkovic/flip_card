@@ -4,7 +4,7 @@ import 'dart:async';
 import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 
-import 'flip_card_transition.dart';
+import 'flip_transition.dart';
 
 enum CardSide {
   front,
@@ -78,6 +78,7 @@ class FlipCard extends StatefulWidget {
   ///```
   final bool flipOnTouch;
 
+  /// Called
   final VoidCallback? onFlip;
   final void Function(CardSide side)? onFlipDone;
   final CardSide initialSide;
@@ -131,7 +132,7 @@ class FlipCardState extends State<FlipCard>
   /// {@template flip_card.FlipCardState.flip}
   /// Flips the card or reverses the direction of the current animation
   ///
-  /// This function will complete when animation is done
+  /// This function returns a future that will complete when animation is done
   /// {@endtemplate}
   Future<void> flip() async {
     if (!mounted) return;
@@ -239,7 +240,7 @@ class FlipCardState extends State<FlipCard>
 
   @override
   Widget build(BuildContext context) {
-    final child = FlipCardTransition(
+    final child = FlipTransition(
       front: widget.front,
       back: widget.back,
       animation: controller,
