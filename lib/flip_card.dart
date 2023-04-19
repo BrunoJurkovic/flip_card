@@ -119,7 +119,11 @@ class FlipCardState extends State<FlipCard>
       controller.duration = widget.duration;
     }
 
-    if (widget.controller?.state != this) {
+    if (widget.controller != oldWidget.controller) {
+      if (oldWidget.controller?.state == this) {
+        oldWidget.controller?.state = null;
+      }
+
       widget.controller?.state = this;
     }
   }
