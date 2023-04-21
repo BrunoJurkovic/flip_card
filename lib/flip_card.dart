@@ -27,7 +27,7 @@ extension on TickerFuture {
 
 class FlipCard extends StatefulWidget {
   const FlipCard({
-    Key? key,
+    super.key,
     required this.front,
     required this.back,
     this.duration = const Duration(milliseconds: 500),
@@ -40,7 +40,7 @@ class FlipCard extends StatefulWidget {
     this.fill = Fill.none,
     this.initialSide = CardSide.front,
     this.autoFlipDuration,
-  }) : super(key: key);
+  });
 
   /// The initially shown side of the card
   final CardSide initialSide;

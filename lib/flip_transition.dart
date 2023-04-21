@@ -8,7 +8,7 @@ Widget _noop(Widget child) => child;
 
 class FlipTransition extends StatefulWidget {
   const FlipTransition({
-    Key? key,
+    super.key,
     required this.front,
     required this.back,
     required this.animation,
@@ -17,7 +17,7 @@ class FlipTransition extends StatefulWidget {
     this.alignment = Alignment.center,
     this.frontAnimator,
     this.backAnimator,
-  }) : super(key: key);
+  });
 
   final Widget front;
   final Widget back;
@@ -149,11 +149,11 @@ class _FlipTransitionState extends State<FlipTransition> {
 
 class AnimationCard extends AnimatedWidget {
   const AnimationCard({
-    Key? key,
+    super.key,
     required this.child,
     required this.animation,
     required this.direction,
-  }) : super(key: key, listenable: animation);
+  }) : super(listenable: animation);
 
   final Animation<double> animation;
   final Widget child;
