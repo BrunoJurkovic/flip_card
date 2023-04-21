@@ -1,39 +1,81 @@
-# flip_card  [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/fedeoo/flip_card/pulls) [![Pub Package](https://img.shields.io/pub/v/flip_card.svg)](https://pub.dartlang.org/packages/flip_card)
+# flip_card [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/fedeoo/flip_card/pulls) [![Pub Package](https://img.shields.io/pub/v/flip_card.svg)](https://pub.dartlang.org/packages/flip_card)
 
 A component that provides a flip card animation. It could be used for hiding and showing details of a product.
 
 <p>
-<img src="https://github.com/fedeoo/flip_card/blob/master/screenshots/flip-h.gif?raw=true&v1" width="320" />
-<img src="https://github.com/fedeoo/flip_card/blob/master/screenshots/flip-v.gif?raw=true&v1" width="320" />
+  <img src="/screenshots/flip-h.gif?raw=true&v1" width="320" />
+  <img src="/screenshots/flip-v.gif?raw=true&v1" width="320" />
 </p>
 
 ## How to use
 
+Import the package
 
-````dart
+```dart
 import 'package:flip_card/flip_card.dart';
-````
+```
 
-Create a flip card. The card will flip when touched
+### Default
+
+Create a flip card as shown below. By default the card is touch controlled.
+
+You can turn of touch control by setting `flipOnTouch` to `false`.
 
 ```dart
 FlipCard(
   fill: Fill.fillBack, // Fill the back side of the card to make in the same size as the front.
   direction: FlipDirection.HORIZONTAL, // default
-  side: CardSide.FRONT, // The side to initially display.
+  initialSide: CardSide.front, // The side to initially display.
   front: Container(
     child: Text('Front'),
   ),
   back: Container(
     child: Text('Back'),
   ),
-);
+)
 ```
 
-You can also configure the card to only flip when desired by using a `GlobalKey` to
-toggle the cards **(not recommended)**:
+### Programmatically
+
+#### Controller (Recommended)
+
+To control the card programmatically, you can pass a controller
+when creating the card.
+
 ```dart
-GlobalKey<FlipCardState> cardKey = GlobalKey<FlipCardState>();
+late FlipCardController _controller = FlipCardController();
+
+@override
+Widget build(BuildContext context) {
+  return FlipCard(
+    controller: _controller,
+    front: ...,
+    back: ...,
+  );
+}
+
+void doStuff() {
+  // Flip the card a bit and back to indicate that it can be flipped (for example on page load)
+  _controller.hint(
+    duration: const Duration(milliseconds: 400),
+  );
+
+  // Tilt the card a bit (for example when hovering)
+  _controller.skew(0.2);
+
+  // Flip the card programmatically
+  _controller.flip();
+}
+```
+
+#### Global Key
+
+You can also control the card via a global key as shown below.
+
+This is not the recommended way.
+
+```dart
+final cardKey = GlobalKey<FlipCardState>();
 
 @override
 Widget build(BuildContext context) {
@@ -53,44 +95,15 @@ Widget build(BuildContext context) {
 }
 ```
 
-Recommended way to flip the card to avoid creating GlobalKeys:
-```dart
-FlipCardController _controller;
-
-@override
-void initState() {
-  super.initState();
-  _controller = FlipCardController();
-}
-
-child: FlipCard(
-  controller: _controller,
-)
-
-void doStuff() {
-  // Flip the card a bit and back to indicate that it can be flipped (for example on page load)
-  _controller.hint(
-    duration: UIConfig.projectFlipHintDuration,
-    total: UIConfig.projectFlipHintTotal,
-  );
-
-  // Tilt the card a bit (for example when hovering)
-  _controller.hint(
-    duration: UIConfig.projectFlipHintDuration,
-    total: UIConfig.projectFlipHintTotal,
-  );
-
-  // Flip the card programmatically
-  _controller.toggleCard();
-}
-```
+### Timed
 
 You can auto-flip the widget after a certain delay without any external triggering.
+
 ```dart
 FlipCard(
-  fill: Fill.fillBack, // Fill the back side of the card to make in the same size as the front.
-  direction: FlipDirection.HORIZONTAL, // default
-  side: CardSide.FRONT, // The side to initially display.
+  fill: Fill.back, // Fill the back side of the card to make in the same size as the front.
+  direction: Axis.horizontal, // default
+  initialSide: CardSide.front, // The side to initially display.
   front: Container(
     child: Text('Front'),
   ),
@@ -98,5 +111,5 @@ FlipCard(
     child: Text('Back'),
   ),
   autoFlipDuration: const Duration(seconds: 2), // The flip effect will work automatically after the 2 seconds
-);
+)
 ```
