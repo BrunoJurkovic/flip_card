@@ -174,7 +174,8 @@ class AnimationCard extends AnimatedWidget {
 
     return Transform(
       transform: transform,
-      alignment: Alignment.center,
+      alignment: FractionalOffset.center,
+      filterQuality: FilterQuality.none,
       child: child,
     );
   }
