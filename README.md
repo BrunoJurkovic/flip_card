@@ -65,6 +65,12 @@ void doStuff() {
 
   // Flip the card programmatically
   _controller.flip();
+
+  // Flip the card to front specifically
+  _controller.flip(CardSide.front);
+
+  // Flip the card without animation
+  _controller.flipWithoutAnimation();
 }
 ```
 

@@ -154,46 +154,62 @@ class FlipCardState extends State<FlipCard>
   /// {@template flip_card.FlipCardState.flip}
   /// Flips the card or reverses the direction of the current animation
   ///
+  /// You can optionally pass a [targetSide] to show next
+  ///
   /// This function returns a future that will complete when animation is done
   /// {@endtemplate}
-  Future<void> flip() async {
+  Future<void> flip([CardSide? targetSide]) async {
     if (!mounted) return;
     widget.onFlip?.call();
 
-    switch (controller.status) {
-      case AnimationStatus.dismissed:
-      case AnimationStatus.reverse:
+    targetSide ??= getOppositeSide();
+
+    switch (targetSide) {
+      case CardSide.front:
         await controller.forward().complete;
-        widget.onFlipDone?.call(CardSide.back);
         break;
-      case AnimationStatus.forward:
-      case AnimationStatus.completed:
+      case CardSide.back:
         await controller.reverse().complete;
-        widget.onFlipDone?.call(CardSide.front);
         break;
     }
+
+    widget.onFlipDone?.call(targetSide);
   }
 
   /// {@template flip_card.FlipCardState.flipWithoutAnimation}
   /// Flip the card without playing an animation.
   ///
+  /// You can optionally pass a [targetSide] to show next
+  ///
   /// This will cancel any ongoing animation.
   /// {@endtemplate}
-  void flipWithoutAnimation() {
+  void flipWithoutAnimation([CardSide? targetSide]) {
     controller.stop();
     widget.onFlip?.call();
 
+    targetSide ??= getOppositeSide();
+
+    switch (targetSide) {
+      case CardSide.front:
+        controller.value = 1.0;
+        break;
+      case CardSide.back:
+        controller.value = 0.0;
+        break;
+    }
+
+    widget.onFlipDone?.call(targetSide);
+  }
+
+  /// Return the opposite side from the side currently being shown
+  CardSide getOppositeSide() {
     switch (controller.status) {
       case AnimationStatus.dismissed:
       case AnimationStatus.reverse:
-        controller.value = 1.0;
-        widget.onFlipDone?.call(CardSide.back);
-        break;
+        return CardSide.back;
       case AnimationStatus.forward:
       case AnimationStatus.completed:
-        controller.value = 0.0;
-        widget.onFlipDone?.call(CardSide.front);
-        break;
+        return CardSide.front;
     }
   }
 
