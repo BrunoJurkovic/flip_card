@@ -53,7 +53,7 @@ class FlipCardController {
       await state.flip(targetSide);
 
   /// {@macro flip_card.FlipCardState.flipWithoutAnimation}
-  void flipWithoutAnimation(targetSide) =>
+  void flipWithoutAnimation([CardSide? targetSide]) =>
       state.flipWithoutAnimation(targetSide);
 
   /// {@macro flip_card.FlipCardState.skew}

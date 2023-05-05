@@ -25,6 +25,27 @@ extension on TickerFuture {
   }
 }
 
+/// A widget that provides a flip card animation.
+/// It could be used for hiding and showing details of a product.
+///
+/// To control the card programmatically,
+/// you can pass a [controller] when creating the card.
+///
+/// ## Example
+///
+/// ```dart
+/// FlipCard(
+///   fill: Fill.fillBack,
+///   direction: FlipDirection.HORIZONTAL, // default
+///   initialSide: CardSide.front, // The side to initially display.
+///   front: Container(
+///     child: Text('Front'),
+///   ),
+///   back: Container(
+///     child: Text('Back'),
+///   ),
+/// )
+/// ```
 class FlipCard extends StatefulWidget {
   const FlipCard({
     super.key,
@@ -69,28 +90,9 @@ class FlipCard extends StatefulWidget {
   final Fill fill;
 
   /// When enabled, the card will flip automatically when touched. This behavior
-  /// can be disabled if this is not desired. To manually flip a card from your
-  /// code, you could do this:
-  ///```dart
-  /// GlobalKey<FlipCardState> cardKey = GlobalKey<FlipCardState>();
+  /// can be disabled if this is not desired.
   ///
-  /// @override
-  /// Widget build(BuildContext context) {
-  ///   return FlipCard(
-  ///     key: cardKey,
-  ///     flipOnTouch: false,
-  ///     front: Container(
-  ///       child: RaisedButton(
-  ///         onPressed: () => cardKey.currentState.toggleCard(),
-  ///         child: Text('Toggle'),
-  ///       ),
-  ///     ),
-  ///     back: Container(
-  ///       child: Text('Back'),
-  ///     ),
-  ///   );
-  /// }
-  ///```
+  /// To manually flip a card from your code use a [controller].
   final bool flipOnTouch;
 
   /// This callback is triggered when the card flipping is started
