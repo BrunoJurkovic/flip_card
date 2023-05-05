@@ -49,10 +49,12 @@ class FlipCardController {
   set state(FlipCardState? value) => _internalState = value;
 
   /// {@macro flip_card.FlipCardState.flip}
-  Future<void> flip() async => await state.flip();
+  Future<void> flip({CardSide? targetSide}) async =>
+      await state.flip(targetSide);
 
   /// {@macro flip_card.FlipCardState.flipWithoutAnimation}
-  void flipWithoutAnimation() => state.flipWithoutAnimation();
+  void flipWithoutAnimation(targetSide) =>
+      state.flipWithoutAnimation(targetSide);
 
   /// {@macro flip_card.FlipCardState.skew}
   Future<void> skew(
