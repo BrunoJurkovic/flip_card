@@ -168,10 +168,10 @@ class FlipCardState extends State<FlipCard>
 
     switch (targetSide) {
       case CardSide.front:
-        await controller.forward().complete;
+        await controller.reverse().complete;
         break;
       case CardSide.back:
-        await controller.reverse().complete;
+        await controller.forward().complete;
         break;
     }
 
@@ -193,10 +193,10 @@ class FlipCardState extends State<FlipCard>
 
     switch (targetSide) {
       case CardSide.front:
-        controller.value = 1.0;
+        controller.value = 0.0;
         break;
       case CardSide.back:
-        controller.value = 0.0;
+        controller.value = 1.0;
         break;
     }
 
