@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 Widget _fill(Widget child) => Positioned.fill(child: child);
 Widget _noop(Widget child) => child;
 
-class FlipTransition extends StatefulWidget {
-  const FlipTransition({
+class FlipCardTransition extends StatefulWidget {
+  const FlipCardTransition({
     super.key,
     required this.front,
     required this.back,
@@ -60,10 +60,10 @@ class FlipTransition extends StatefulWidget {
   );
 
   @override
-  State<FlipTransition> createState() => _FlipTransitionState();
+  State<FlipCardTransition> createState() => _FlipCardTransitionState();
 }
 
-class _FlipTransitionState extends State<FlipTransition> {
+class _FlipCardTransitionState extends State<FlipCardTransition> {
   late CardSide _currentSide;
 
   @override
@@ -74,7 +74,7 @@ class _FlipTransitionState extends State<FlipTransition> {
   }
 
   @override
-  void didUpdateWidget(covariant FlipTransition oldWidget) {
+  void didUpdateWidget(covariant FlipCardTransition oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.animation != oldWidget.animation) {
       oldWidget.animation.removeStatusListener(_handleChange);
@@ -123,11 +123,11 @@ class _FlipTransitionState extends State<FlipTransition> {
       /// absorb the front card when the background is active (!isFront),
       /// absorb the background when the front is active
       ignoring: isFront ? !showingFront : showingFront,
-      child: AnimationCard(
+      child: FlipTransition(
         animation: isFront
-            ? (widget.frontAnimator ?? FlipTransition.defaultFrontAnimator)
+            ? (widget.frontAnimator ?? FlipCardTransition.defaultFrontAnimator)
                 .animate(widget.animation)
-            : (widget.backAnimator ?? FlipTransition.defaultBackAnimator)
+            : (widget.backAnimator ?? FlipCardTransition.defaultBackAnimator)
                 .animate(widget.animation),
         direction: widget.direction,
         child: child,
@@ -136,8 +136,8 @@ class _FlipTransitionState extends State<FlipTransition> {
   }
 }
 
-class AnimationCard extends AnimatedWidget {
-  const AnimationCard({
+class FlipTransition extends AnimatedWidget {
+  const FlipTransition({
     super.key,
     required this.child,
     required this.animation,

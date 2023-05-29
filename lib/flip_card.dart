@@ -4,7 +4,7 @@ import 'dart:async';
 import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 
-import 'flip_transition.dart';
+import 'flip_card_transition.dart';
 
 enum CardSide {
   front,
@@ -295,7 +295,7 @@ class FlipCardState extends State<FlipCard>
 
   @override
   Widget build(BuildContext context) {
-    final child = FlipTransition(
+    final child = FlipCardTransition(
       front: widget.front,
       back: widget.back,
       animation: controller,
