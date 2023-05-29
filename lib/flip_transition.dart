@@ -69,7 +69,7 @@ class _FlipTransitionState extends State<FlipTransition> {
   @override
   void initState() {
     super.initState();
-    _currentSide = _getSideFor(widget.animation.status);
+    _currentSide = CardSide.fromAnimationStatus(widget.animation.status);
     widget.animation.addStatusListener(_handleChange);
   }
 
@@ -79,7 +79,7 @@ class _FlipTransitionState extends State<FlipTransition> {
     if (widget.animation != oldWidget.animation) {
       oldWidget.animation.removeStatusListener(_handleChange);
       widget.animation.addStatusListener(_handleChange);
-      _currentSide = _getSideFor(widget.animation.status);
+      _currentSide = CardSide.fromAnimationStatus(widget.animation.status);
     }
   }
 
@@ -89,19 +89,8 @@ class _FlipTransitionState extends State<FlipTransition> {
     widget.animation.removeStatusListener(_handleChange);
   }
 
-  CardSide _getSideFor(AnimationStatus status) {
-    switch (status) {
-      case AnimationStatus.dismissed:
-      case AnimationStatus.reverse:
-        return CardSide.front;
-      case AnimationStatus.forward:
-      case AnimationStatus.completed:
-        return CardSide.back;
-    }
-  }
-
   void _handleChange(AnimationStatus status) {
-    final newSide = _getSideFor(status);
+    final newSide = CardSide.fromAnimationStatus(status);
     if (newSide != _currentSide) {
       setState(() {
         _currentSide = newSide;

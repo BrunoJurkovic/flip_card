@@ -8,7 +8,29 @@ import 'flip_transition.dart';
 
 enum CardSide {
   front,
-  back,
+  back;
+
+  /// Return [CardSide] associated with the [AnimationStatus]
+  factory CardSide.fromAnimationStatus(AnimationStatus status) {
+    switch (status) {
+      case AnimationStatus.dismissed:
+      case AnimationStatus.reverse:
+        return CardSide.front;
+      case AnimationStatus.forward:
+      case AnimationStatus.completed:
+        return CardSide.back;
+    }
+  }
+
+  /// Return the opposite of the this [CardSide]
+  CardSide get opposite {
+    switch (this) {
+      case CardSide.front:
+        return CardSide.back;
+      case CardSide.back:
+        return CardSide.front;
+    }
+  }
 }
 
 enum Fill { none, front, back }
@@ -205,14 +227,7 @@ class FlipCardState extends State<FlipCard>
 
   /// Return the opposite side from the side currently being shown
   CardSide getOppositeSide() {
-    switch (controller.status) {
-      case AnimationStatus.dismissed:
-      case AnimationStatus.reverse:
-        return CardSide.back;
-      case AnimationStatus.forward:
-      case AnimationStatus.completed:
-        return CardSide.front;
-    }
+    return CardSide.fromAnimationStatus(controller.status).opposite;
   }
 
   /// {@template flip_card.FlipCardState.skew}
