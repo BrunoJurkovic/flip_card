@@ -19,7 +19,7 @@ import 'package:flip_card/flip_card.dart';
 
 Create a flip card as shown below. By default the card is touch controlled.
 
-You can turn of touch control by setting `flipOnTouch` to `false`.
+You can turn off touch control by setting `flipOnTouch` to `false`.
 
 ```dart
 FlipCard(
