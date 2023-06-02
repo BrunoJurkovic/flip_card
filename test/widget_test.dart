@@ -12,18 +12,16 @@ import 'package:flip_card/flip_card.dart';
 void main() {
   testWidgets('smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    final frontKey = Key('front');
-    final backKey = Key('back');
     await tester.pumpWidget(Directionality(
       textDirection: TextDirection.ltr,
       child: FlipCard(
         front: Container(
-          key: frontKey,
-          child: Text('front'),
+          key: const Key('front'),
+          child: const Text('front'),
         ),
         back: Container(
-          key: backKey,
-          child: Text('back'),
+          key: const Key('back'),
+          child: const Text('back'),
         ),
       ),
     ));
@@ -40,11 +38,11 @@ void main() {
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
-        child: new FlipCard(
-          front: Text('front'),
+        child: FlipCard(
+          front: const Text('front'),
           back: TextButton(
             onPressed: () => backgroundTouched = true,
-            child: Text('back'),
+            child: const Text('back'),
           ),
         ),
       ),
@@ -54,68 +52,133 @@ void main() {
     expect(backgroundTouched, false);
   });
 
-  testWidgets('card initialized with back side', (WidgetTester tester) async {
-    await tester.pumpWidget(
+  testWidgets('background enabled when turned back', (widgetTester) async {
+    // check that background touches are blocked
+    bool backgroundTouched = false;
+
+    await widgetTester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
-        child: new FlipCard(
-          front: Text('front'),
-          back: Text('back'),
-          side: CardSide.BACK,
+        child: FlipCard(
+          front: const Text('front'),
+          back: TextButton(
+            onPressed: () => backgroundTouched = true,
+            child: const Text('back'),
+          ),
         ),
       ),
     );
-    final state = tester.state<FlipCardState>(find.byType(FlipCard));
 
-    expect(state.isFront, isFalse);
+    await widgetTester.tap(find.byType(FlipCard));
+    await widgetTester.pumpAndSettle();
 
-    await tester.tap(find.byType(FlipCard));
-    await tester.pumpAndSettle();
+    final state = widgetTester.state<FlipCardState>(find.byType(FlipCard));
+    expect(state.controller.status, AnimationStatus.completed,
+        reason: 'Ensure card flipped back');
 
-    expect(state.isFront, isTrue);
+    await widgetTester.tap(find.byType(TextButton));
+    await widgetTester.pumpAndSettle();
+
+    expect(backgroundTouched, true);
   });
 
-  group('cards flip', () {
-    testWidgets('automatically', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        Directionality(
+  group('initial side with', () {
+    testWidgets('front side', (widgetTester) async {
+      await widgetTester.pumpWidget(
+        const Directionality(
           textDirection: TextDirection.ltr,
-          child: new FlipCard(
+          child: FlipCard(
+            initialSide: CardSide.front,
             front: Text('front'),
             back: Text('back'),
           ),
         ),
       );
-      final state = tester.state<FlipCardState>(find.byType(FlipCard));
 
-      expect(state.isFront, isTrue);
+      final state = widgetTester.state<FlipCardState>(find.byType(FlipCard));
+      expect(state.controller.status, AnimationStatus.dismissed);
+
+      await widgetTester.tap(find.byType(FlipCard));
+      await widgetTester.pumpAndSettle();
+
+      expect(state.controller.status, AnimationStatus.completed);
+    });
+
+    testWidgets('back side', (widgetTester) async {
+      await widgetTester.pumpWidget(
+        const Directionality(
+          textDirection: TextDirection.ltr,
+          child: FlipCard(
+            initialSide: CardSide.back,
+            front: Text('front'),
+            back: Text('back'),
+          ),
+        ),
+      );
+
+      final state = widgetTester.state<FlipCardState>(find.byType(FlipCard));
+      expect(state.controller.status, AnimationStatus.completed);
+
+      await widgetTester.tap(find.byType(FlipCard));
+      await widgetTester.pumpAndSettle();
+
+      expect(state.controller.status, AnimationStatus.dismissed);
+    });
+  });
+
+  group('cards flip', () {
+    testWidgets('automatically', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const Directionality(
+          textDirection: TextDirection.ltr,
+          child: FlipCard(
+            front: Text('front'),
+            back: Text('back'),
+            flipOnTouch: true,
+          ),
+        ),
+      );
+      final state = tester.state<FlipCardState>(find.byType(FlipCard));
+      expect(state.controller.status, AnimationStatus.dismissed);
 
       await tester.tap(find.byType(FlipCard));
       await tester.pumpAndSettle();
 
-      expect(state.isFront, isFalse);
+      expect(state.controller.status, AnimationStatus.completed);
     });
 
     testWidgets('manually', (WidgetTester tester) async {
       await tester.pumpWidget(
-        Directionality(
+        const Directionality(
           textDirection: TextDirection.ltr,
-          child: new FlipCard(
+          child: FlipCard(
             flipOnTouch: false,
             front: Text('front'),
             back: Text('back'),
           ),
         ),
       );
+
       final state = tester.state<FlipCardState>(find.byType(FlipCard));
 
       await tester.tap(find.byType(FlipCard));
       await tester.pumpAndSettle();
-      expect(state.isFront, true); // should not have turned by tapping
+      expect(
+        state.controller.status,
+        AnimationStatus.dismissed,
+        reason: 'Should not have turned by tapping',
+      );
 
-      await state.toggleCard();
+      final future = state.flip();
       await tester.pumpAndSettle();
-      expect(state.isFront, false);
+      await future;
+      await tester.pumpAndSettle();
+
+      expect(
+        state.controller.status,
+        AnimationStatus.completed,
+        reason: 'Should have turned by manually calling toggleCard',
+      );
     });
 
     testWidgets('manually via controller', (WidgetTester tester) async {
@@ -124,20 +187,22 @@ void main() {
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: new FlipCard(
+          child: FlipCard(
             controller: controller,
             flipOnTouch: false,
-            front: Text('front'),
-            back: Text('back'),
+            front: const Text('front'),
+            back: const Text('back'),
           ),
         ),
       );
       // final state = tester.state<FlipCardState>(find.byType(FlipCard));
 
-      await controller.toggleCard();
+      final future = controller.flip();
+      await tester.pumpAndSettle();
+      await future;
       await tester.pumpAndSettle();
 
-      expect(controller.state?.isFront, false);
+      expect(controller.state.controller.status, AnimationStatus.completed);
     });
 
     testWidgets('manually via controller without animation',
@@ -147,19 +212,19 @@ void main() {
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: new FlipCard(
+          child: FlipCard(
             controller: controller,
             flipOnTouch: false,
-            front: Text('front'),
-            back: Text('back'),
+            front: const Text('front'),
+            back: const Text('back'),
           ),
         ),
       );
 
-      controller.toggleCardWithoutAnimation();
+      controller.flipWithoutAnimation();
       await tester.pump();
 
-      expect(controller.state?.isFront, false);
+      expect(controller.state.controller.status, AnimationStatus.completed);
     });
   });
 
@@ -170,21 +235,22 @@ void main() {
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: new FlipCard(
+          child: FlipCard(
             controller: controller,
             flipOnTouch: false,
-            front: Text('front'),
-            back: Text('back'),
+            front: const Text('front'),
+            back: const Text('back'),
           ),
         ),
       );
 
       final state = tester.state<FlipCardState>(find.byType(FlipCard));
-
-      await controller.skew(0.5);
-
+      final future = controller.skew(0.2);
       await tester.pumpAndSettle();
-      expect(state.isFront, true);
+      await future;
+      await tester.pumpAndSettle();
+
+      expect(state.controller.status, AnimationStatus.completed);
     });
   });
 
@@ -195,22 +261,22 @@ void main() {
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
-          child: new FlipCard(
+          child: FlipCard(
             controller: controller,
             flipOnTouch: false,
-            front: Text('front'),
-            back: Text('back'),
+            front: const Text('front'),
+            back: const Text('back'),
           ),
         ),
       );
 
       final state = tester.state<FlipCardState>(find.byType(FlipCard));
-
-      await controller.hint(
-          duration: Duration(seconds: 1), total: Duration(seconds: 2));
-
+      final future = controller.hint();
       await tester.pumpAndSettle();
-      expect(state.isFront, true);
+      await future;
+      await tester.pumpAndSettle();
+
+      expect(state.controller.status, AnimationStatus.dismissed);
     });
   });
 }
