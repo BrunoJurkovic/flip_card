@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flip_card/flip_card.dart';
+
+import 'flip_card.dart';
 
 /// A controller used with [FlipCard] to control it programmatically
 ///

@@ -1,7 +1,8 @@
 import 'dart:math';
 
-import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
+
+import 'flip_card.dart';
 
 Widget _fill(Widget child) => Positioned.fill(child: child);
 Widget _noop(Widget child) => child;
