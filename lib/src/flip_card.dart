@@ -89,16 +89,16 @@ class FlipCard extends StatefulWidget {
   /// The initially shown side of the card
   final CardSide initialSide;
 
-  /// The alignment of [front] and [back]
+  /// {@macro flip_card.FlipCardTransition.alignment}
   final Alignment alignment;
 
   /// If the value is set, the flip effect will work automatically after the specified duration.
   final Duration? autoFlipDuration;
 
-  /// The widget rendered on the front side
+  /// {@macro flip_card.FlipCardTransition.front}
   final Widget front;
 
-  /// The widget rendered on the back side
+  /// {@macro flip_card.FlipCardTransition.back}
   final Widget back;
 
   /// Assign a controller to the [FlipCard] to control it programmatically
@@ -106,10 +106,10 @@ class FlipCard extends StatefulWidget {
   /// {@macro flip_card_controller.example}
   final FlipCardController? controller;
 
-  /// The animation [Axis] of the card
+  /// {@macro flip_card.FlipCardTransition.direction}
   final Axis direction;
 
-  /// Whether to fill a side of the card relative to the other
+  /// {@macro flip_card.FlipCardTransition.fill}
   final Fill fill;
 
   /// When enabled, the card will flip automatically when touched. This behavior
@@ -132,6 +132,10 @@ class FlipCard extends StatefulWidget {
   State<StatefulWidget> createState() => FlipCardState();
 }
 
+/// State associated with a [FlipCard] widget.
+///
+/// A [FlipCardState] can be used to [flip], [flipWithoutAnimation], [skew]
+/// or [hint] the associated [FlipCard]
 class FlipCardState extends State<FlipCard>
     with SingleTickerProviderStateMixin {
   late AnimationController controller;
