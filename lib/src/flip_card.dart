@@ -36,6 +36,7 @@ enum CardSide {
 enum Fill { none, front, back }
 
 extension on TickerFuture {
+  /// Wait until ticker completes or an error is thrown
   Future<void> get complete {
     final completer = Completer();
     void thunk(value) {
@@ -243,17 +244,21 @@ class FlipCardState extends State<FlipCard>
     assert(0 <= target && target <= 1);
 
     if (target > controller.value) {
-      await controller.animateTo(
-        target,
-        duration: duration,
-        curve: curve ?? Curves.linear,
-      );
+      await controller
+          .animateTo(
+            target,
+            duration: duration,
+            curve: curve ?? Curves.linear,
+          )
+          .complete;
     } else {
-      await controller.animateBack(
-        target,
-        duration: duration,
-        curve: curve ?? Curves.linear,
-      );
+      await controller
+          .animateBack(
+            target,
+            duration: duration,
+            curve: curve ?? Curves.linear,
+          )
+          .complete;
     }
   }
 
@@ -279,17 +284,21 @@ class FlipCardState extends State<FlipCard>
         Duration(milliseconds: (duration.inMilliseconds / 2).round());
 
     try {
-      await controller.animateTo(
-        target,
-        duration: halfDuration,
-        curve: curveTo,
-      );
+      await controller
+          .animateTo(
+            target,
+            duration: halfDuration,
+            curve: curveTo,
+          )
+          .complete;
     } finally {
-      await controller.animateBack(
-        0,
-        duration: halfDuration,
-        curve: curveBack,
-      );
+      await controller
+          .animateBack(
+            0,
+            duration: halfDuration,
+            curve: curveBack,
+          )
+          .complete;
     }
   }
 
