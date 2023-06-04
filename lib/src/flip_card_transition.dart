@@ -10,7 +10,7 @@ Widget _noop(Widget child) => child;
 /// The transition used internally by [FlipCard]
 ///
 /// You obtain more control by providing your on [Animation]
-/// at the cost of built it methods like [FlipCardState.flip]
+/// at the cost of built-in methods like [FlipCardState.flip]
 class FlipCardTransition extends StatefulWidget {
   const FlipCardTransition({
     super.key,
