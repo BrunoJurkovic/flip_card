@@ -1,11 +1,16 @@
 import 'dart:math';
 
-import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
+
+import 'flip_card.dart';
 
 Widget _fill(Widget child) => Positioned.fill(child: child);
 Widget _noop(Widget child) => child;
 
+/// The transition used internally by [FlipCard]
+///
+/// You obtain more control by providing your on [Animation]
+/// at the cost of built-in methods like [FlipCardState.flip]
 class FlipCardTransition extends StatefulWidget {
   const FlipCardTransition({
     super.key,
@@ -19,16 +24,41 @@ class FlipCardTransition extends StatefulWidget {
     this.backAnimator,
   });
 
+  /// {@template flip_card.FlipCardTransition.front}
+  /// The widget rendered on the front side
+  /// {@endtemplate}
   final Widget front;
+
+  /// {@template flip_card.FlipCardTransition.back}
+  /// The widget rendered on the front side
+  /// {@endtemplate}
   final Widget back;
+
+  /// The [Animation] that controls the flip card
   final Animation<double> animation;
+
+  /// {@template flip_card.FlipCardTransition.direction}
+  /// The animation [Axis] of the card
+  /// {@endtemplate}
   final Axis direction;
+
+  /// {@template flip_card.FlipCardTransition.fill}
+  /// Whether to fill a side of the card relative to the other
+  /// {@endtemplate}
   final Fill fill;
+
+  /// {@template flip_card.FlipCardTransition.alignment}
+  /// How to align the [front] and [back] in the card
+  /// {@endtemplate}
   final Alignment alignment;
 
+  /// The [Animatable] used to animate the front side
   final Animatable<double>? frontAnimator;
+
+  /// The [Animatable] used to animate the back side
   final Animatable<double>? backAnimator;
 
+  /// The default [frontAnimator]
   static final defaultFrontAnimator = TweenSequence(
     [
       TweenSequenceItem<double>(
@@ -44,6 +74,7 @@ class FlipCardTransition extends StatefulWidget {
     ],
   );
 
+  /// The default [backAnimator]
   static final defaultBackAnimator = TweenSequence(
     [
       TweenSequenceItem<double>(
@@ -136,6 +167,10 @@ class _FlipCardTransitionState extends State<FlipCardTransition> {
   }
 }
 
+/// The transition used by each side of the [FlipCardTransition]
+///
+/// This applies a rotation [Transform] in the given [direction]
+/// where the angle is [Animation.value]
 class FlipTransition extends AnimatedWidget {
   const FlipTransition({
     super.key,
@@ -144,8 +179,13 @@ class FlipTransition extends AnimatedWidget {
     required this.direction,
   }) : super(listenable: animation);
 
+  /// The [Animation] that controls this transition
   final Animation<double> animation;
+
+  /// The widget being animated
   final Widget child;
+
+  /// The direction of the flip
   final Axis direction;
 
   @override
