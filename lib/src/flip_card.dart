@@ -84,6 +84,7 @@ class FlipCard extends StatefulWidget {
     this.fill = Fill.none,
     this.initialSide = CardSide.front,
     this.autoFlipDuration,
+    this.filterQuality,
   });
 
   /// The initially shown side of the card
@@ -111,6 +112,9 @@ class FlipCard extends StatefulWidget {
 
   /// {@macro flip_card.FlipCardTransition.fill}
   final Fill fill;
+
+  /// {@macro flip_card.FlipTransition.filterQuality}
+  final FilterQuality? filterQuality;
 
   /// When enabled, the card will flip automatically when touched. This behavior
   /// can be disabled if this is not desired.
@@ -315,6 +319,7 @@ class FlipCardState extends State<FlipCard>
       direction: widget.direction,
       fill: widget.fill,
       alignment: widget.alignment,
+      filterQuality: widget.filterQuality,
     );
 
     /// if we need to flip the card on taps, wrap the content

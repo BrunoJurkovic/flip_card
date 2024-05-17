@@ -22,6 +22,7 @@ class FlipCardTransition extends StatefulWidget {
     this.alignment = Alignment.center,
     this.frontAnimator,
     this.backAnimator,
+    this.filterQuality,
   });
 
   /// {@template flip_card.FlipCardTransition.front}
@@ -51,6 +52,9 @@ class FlipCardTransition extends StatefulWidget {
   /// How to align the [front] and [back] in the card
   /// {@endtemplate}
   final Alignment alignment;
+
+  /// {@macro flip_card.FlipTransition.filterQuality}
+  final FilterQuality? filterQuality;
 
   /// The [Animatable] used to animate the front side
   final Animatable<double>? frontAnimator;
@@ -161,6 +165,7 @@ class _FlipCardTransitionState extends State<FlipCardTransition> {
             : (widget.backAnimator ?? FlipCardTransition.defaultBackAnimator)
                 .animate(widget.animation),
         direction: widget.direction,
+        filterQuality: widget.filterQuality,
         child: child,
       ),
     );
@@ -177,6 +182,7 @@ class FlipTransition extends AnimatedWidget {
     required this.child,
     required this.animation,
     required this.direction,
+    required this.filterQuality,
   }) : super(listenable: animation);
 
   /// The [Animation] that controls this transition
@@ -187,6 +193,12 @@ class FlipTransition extends AnimatedWidget {
 
   /// The direction of the flip
   final Axis direction;
+
+  /// {@template flip_card.FlipTransition.filterQuality}
+  /// The filter quality for the internal [Transform] on the card.
+  /// Setting this to [FilterQuality.none] can prevent vertical lines but might lead to other issues.
+  /// {@endtemplate}
+  final FilterQuality? filterQuality;
 
   @override
   Widget build(BuildContext context) {
@@ -204,7 +216,7 @@ class FlipTransition extends AnimatedWidget {
     return Transform(
       transform: transform,
       alignment: FractionalOffset.center,
-      filterQuality: FilterQuality.none,
+      filterQuality: filterQuality,
       child: child,
     );
   }
