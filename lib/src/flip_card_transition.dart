@@ -191,7 +191,7 @@ class FlipTransition extends AnimatedWidget {
   @override
   Widget build(BuildContext context) {
     final transform = Matrix4.identity();
-    transform.setEntry(3, 2, 0.001);
+    transform.setEntry(3, 2, 0);
     switch (direction) {
       case Axis.horizontal:
         transform.rotateY(animation.value);
